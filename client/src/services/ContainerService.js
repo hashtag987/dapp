@@ -13,7 +13,7 @@ export class ContainerService extends React.Component {
   };
   constructor() {
     super();
-    console.log("ContainerService Initialized...");
+    // console.log("ContainerService Initialized...");
     this.createWeb3()
   }
 

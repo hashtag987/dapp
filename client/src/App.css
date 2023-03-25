@@ -36,7 +36,15 @@
   position: absolute;
   width: 170px;
   height: 100px;
-  left:30px;
+  left: 30px;
   color: rgb(66, 66, 243);
   font-family: soc;
+}
+
+.header-text {
+  position: absolute;
+  top: 0;
+  font-family: soc;
+  font-weight: bold;
+  font-size: 50px;
 }

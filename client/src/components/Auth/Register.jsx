@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, TextField, Button } from "@mui/material";
 import { UserService } from "../../services/UserService";
 import { Link, useNavigate } from "react-router-dom";
-import { ContainerService } from "../../services/ContainerService";
+import Typewriter from "typewriter-effect";
 import axios from "axios";
 import { URL, STATUS_MESSAGE } from "../../constants";
 import Alertbox from "../../utils/AlertBox";
@@ -13,10 +13,13 @@ const Register = () => {
   const [message, setmessage] = useState("");
   const [severity, setseverity] = useState("success");
   const [user, setuser] = useState(null);
-  const [cont, setcont] = useState(null);
+
+  const [nameerror, setnameerror] = useState("");
+  const [usernameerror, setusernameerror] = useState("");
+  const [cpassworderror, setcpassworderror] = useState("");
+  const [passwordcheck, setpasswordcheck] = useState([]);
   useEffect(() => {
     setuser(new UserService());
-    setcont(new ContainerService());
   }, []);
 
   const [data, setData] = useState({
@@ -33,28 +36,45 @@ const Register = () => {
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
+    if (input.name === "name" && input.value.length > 0) {
+      setnameerror("");
+    }
+    if (input.name === "username" && input.value.length > 0) {
+      setusernameerror("");
+    }
+    if (input.name === "password" && input.value.length > 0) {
+      setpasswordcheck([]);
+    }
+    if (input.name === "confirmpassword" && input.value.length > 0) {
+      setcpassworderror("");
+    }
   };
 
   const handleSubmit = async (e) => {
     try {
-      const userData = await axios.post(URL.DOMAIN + URL.USER_EXISTS, {
-        username: data.username,
-      });
-      const userExists = await user.userExists(userData.data.userHash);
-      console.log(userExists)
-      if (userExists.status === "200") {
-        setmessage(STATUS_MESSAGE.USER_ALREADY_EXISTS);
-        setseverity("error");
-        setmessagealert(true);
-        return;
-      }
       const res = await axios.post(URL.DOMAIN + URL.CREATE_USER, data);
+      console.log(res);
       if (res.status === 200) {
+        const userData = await axios.post(URL.DOMAIN + URL.USER_EXISTS, {
+          username: data.username,
+        });
+        console.log(userData);
+        const userExists = await user.userExists(userData.data.userHash);
+        console.log(userExists);
+        if (userExists.status === "200") {
+          setmessage(STATUS_MESSAGE.USER_ALREADY_EXISTS);
+          setseverity("error");
+          setmessagealert(true);
+          return;
+        }
+        if (data.password !== data.confirmpassword) {
+          setcpassworderror("Password doesn't match");
+          return;
+        }
         const encData = res.data.data;
         await user.create_user(encData.passwordEnc).then((value) => {
           account = value;
         });
-        cont.setId(account);
         data.token = "sampletoken";
         await user.adduser(
           encData.nameEnc,
@@ -73,11 +93,33 @@ const Register = () => {
         setmessagealert(true);
         setmessage(STATUS_MESSAGE.REGISTER_SUCCESS);
         setseverity("success");
+        setTimeout(() => {
+          navigate("/home");
+        }, 2000);
       }
     } catch (error) {
-      setmessagealert(true);
-      setmessage(STATUS_MESSAGE.TRANSACTION_ERROR);
-      setseverity("error");
+      if (error.response) {
+        let pass_err = [];
+        for (let err of error.response.data.data) {
+          if (err.message.includes("Username")) {
+            setusernameerror(err.message.replaceAll('"', ""));
+          } else if (err.message.includes("Name")) {
+            setnameerror(err.message.replaceAll('"', ""));
+          } else if (err.message.includes("Conformation Password")) {
+            setcpassworderror(err.message.replaceAll('"', ""));
+          } else if (err.message.includes("Password")) {
+            pass_err.push(err.message.replaceAll('"', ""));
+          }
+        }
+        if (data.password !== data.confirmpassword) {
+          setcpassworderror("Password doesn't match");
+        }
+        setpasswordcheck(pass_err);
+      } else {
+        setmessagealert(true);
+        setmessage(STATUS_MESSAGE.TRANSACTION_ERROR);
+        setseverity("error");
+      }
     }
   };
   return (
@@ -91,68 +133,176 @@ const Register = () => {
           severity={severity}
         ></Alertbox>
         <div className="center">
+          <p className="header-text">
+            <Typewriter
+              onInit={(typewriter) => {
+                typewriter.typeString("Hello there...").pauseFor(1000).start();
+              }}
+            />
+          </p>
           <form>
-            <TextField
-            
-              name="name"
-              id="outlined-basic"
-              label="Name"
-              value={data.name}
-              onChange={handleChange}
-              variant="standard"
-              fullWidth
-              size="medium"
-              style={{ margin: "10px" }}
-              autoComplete="off"
-            />
-            <TextField
-              name="username"
-              id="outlined-basic"
-              label="Username"
-              value={data.username}
-              onChange={handleChange}
-              variant="standard"
-              fullWidth
-              size="medium"
-              style={{ margin: "10px" }}
-              autoComplete="off !important"
-            />
-            <TextField
-              name="password"
-              id="outlined-basic"
-              label="Password"
-              value={data.password}
-              onChange={handleChange}
-              type="password"
-              variant="standard"
-              fullWidth
-              size="medium"
-              style={{ margin: "10px" }}
-              autoComplete="off"
-            />
-            <TextField
-              name="confirmpassword"
-              id="outlined-basic"
-              label="Confirm Password"
-              value={data.confirmpassword}
-              onChange={handleChange}
-              type="password"
-              variant="standard"
-              fullWidth
-              size="medium"
-              style={{ margin: "10px" }}
-              autoComplete="off"
-            />
+            {nameerror.length === 0 ? (
+              <TextField
+                name="name"
+                id="outlined-basic"
+                label="Name"
+                value={data.name}
+                onChange={handleChange}
+                variant="standard"
+                fullWidth
+                size="medium"
+                style={{ margin: "10px" }}
+                autoComplete="off"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            ) : (
+              <TextField
+                error
+                name="name"
+                id="outlined-basic"
+                label="Name"
+                value={data.name}
+                onChange={handleChange}
+                variant="standard"
+                fullWidth
+                size="medium"
+                style={{ margin: "10px" }}
+                helperText={nameerror}
+                autoComplete="off"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            )}
+            {usernameerror.length === 0 ? (
+              <TextField
+                name="username"
+                id="outlined-basic"
+                label="Username"
+                value={data.username}
+                onChange={handleChange}
+                variant="standard"
+                fullWidth
+                size="medium"
+                style={{ margin: "10px" }}
+                autoComplete="off !important"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            ) : (
+              <TextField
+                error
+                name="username"
+                id="outlined-basic"
+                label="Username"
+                value={data.username}
+                onChange={handleChange}
+                variant="standard"
+                fullWidth
+                helperText={usernameerror}
+                size="medium"
+                style={{ margin: "10px" }}
+                autoComplete="off !important"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            )}
+            {passwordcheck.length === 0 ? (
+              <TextField
+                name="password"
+                id="outlined-basic"
+                label="Password"
+                value={data.password}
+                onChange={handleChange}
+                type="password"
+                variant="standard"
+                fullWidth
+                size="medium"
+                style={{ margin: "10px" }}
+                autoComplete="off"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            ) : (
+              <TextField
+                error
+                helperText={
+                  <>
+                    {passwordcheck.map((message) => (
+                      <>
+                        {message}
+                        <br></br>
+                      </>
+                    ))}
+                  </>
+                }
+                name="password"
+                id="outlined-basic"
+                label="Password"
+                value={data.password}
+                onChange={handleChange}
+                type="password"
+                variant="standard"
+                fullWidth
+                size="medium"
+                style={{ margin: "10px" }}
+                autoComplete="off"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            )}
+            {cpassworderror.length === 0 ? (
+              <TextField
+                name="confirmpassword"
+                id="outlined-basic"
+                label="Confirm Password"
+                value={data.confirmpassword}
+                onChange={handleChange}
+                type="password"
+                variant="standard"
+                fullWidth
+                size="medium"
+                style={{ margin: "10px" }}
+                autoComplete="off"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            ) : (
+              <TextField
+                error
+                helperText={cpassworderror}
+                name="confirmpassword"
+                id="outlined-basic"
+                label="Confirm Password"
+                value={data.confirmpassword}
+                onChange={handleChange}
+                type="password"
+                variant="standard"
+                fullWidth
+                size="medium"
+                style={{ margin: "10px" }}
+                autoComplete="off"
+                inputProps={{ style: { fontSize: 13 } }}
+                InputLabelProps={{ style: { fontSize: 13 } }}
+              />
+            )}
+
             <Button
               variant="contained"
               onClick={handleSubmit}
               fullWidth
               size="medium"
-              style={{ margin: "10px" }}
+              style={{ margin: "10px", textTransform: "none" }}
             >
               Sign Up
             </Button>
-            <div className="login-redirect" style={{ textAlign: "center" }}>
+            <div
+              className="login-redirect"
+              style={{
+                textAlign: "center",
+                fontSize: 13,
+              }}
+            >
               Already have an account? <Link to="/login">Login here</Link>
             </div>
           </form>

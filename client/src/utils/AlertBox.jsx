@@ -9,7 +9,6 @@ const Alertbox = ({openalert, handleAlertClose, message, severity}) => {
     vertical: "top",
     horizontal: "center",
   };
-  console.log(openalert)
   return (
     <Snackbar
       anchorOrigin={{ vertical, horizontal }}
