@@ -1,0 +1,68 @@
+// File: contracts\UserCreation.sol
+
+// SPDX-License-Identifier: MIT
+
+pragma solidity >=0.4.25 <0.9.0;
+
+contract UserCreation {
+    struct User {
+        string name;
+        string username;
+        string email;
+        string password;
+        string securityQuestion;
+        string securityAnswer;
+        bool exists;
+    }
+
+    mapping(address => User) private users;
+
+    event UserCreated(address indexed userAddress, string name, string username, string email, string securityQuestion);
+    event UserUpdated(address indexed userAddress, string name, string username, string email, string securityQuestion);
+    event UserDeleted(address indexed userAddress);
+
+    function createUser(string memory name, string memory username, string memory email, string memory password, string memory securityQuestion, string memory securityAnswer) public {
+        require(!users[msg.sender].exists, "User already exists");
+
+        User memory newUser = User({
+            name: name,
+            username: username,
+            email: email,
+            password: password,
+            securityQuestion: securityQuestion,
+            securityAnswer: securityAnswer,
+            exists: true
+        });
+
+        users[msg.sender] = newUser;
+
+        emit UserCreated(msg.sender, name, username, email, securityQuestion);
+    }
+
+    function getUser(address userAddress) public view returns (string memory, string memory, string memory, string memory, string memory, string memory) {
+        require(users[userAddress].exists, "User does not exist");
+
+        return (users[userAddress].name, users[userAddress].username, users[userAddress].email, users[userAddress].password, users[userAddress].securityQuestion, users[userAddress].securityAnswer);
+    }
+
+    function updateUser(string memory name, string memory username, string memory email, string memory password, string memory securityQuestion, string memory securityAnswer) public {
+        require(users[msg.sender].exists, "User does not exist");
+
+        users[msg.sender].name = name;
+        users[msg.sender].username = username;
+        users[msg.sender].email = email;
+        users[msg.sender].password = password;
+        users[msg.sender].securityQuestion = securityQuestion;
+        users[msg.sender].securityAnswer = securityAnswer;
+
+        emit UserUpdated(msg.sender, name, username, email, securityQuestion);
+    }
+
+    function deleteUser() public {
+        require(users[msg.sender].exists, "User does not exist");
+
+        delete users[msg.sender];
+
+        emit UserDeleted(msg.sender);
+    }
+}
