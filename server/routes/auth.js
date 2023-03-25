@@ -33,4 +33,16 @@ router.post("/verifyuser", async (req, res) => {
 	}
 });
 
+router.post("/userexists", async (req, res) => {
+	try {
+		const {username} = req.body;
+        const userHash = generateUserHash(username);
+        res.status(200).send({message:"Decryption is performed successfully",userHash:userHash})
+	} catch (error) {
+        console.log(error)
+		res.status(500).send({ message: "Internal Server Error" });
+	}
+});
+
+
 module.exports = router;

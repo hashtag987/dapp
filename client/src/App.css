@@ -1,4 +1,9 @@
-.center{
+@font-face {
+  font-family: soc;
+  src: url("./assets/fonts/soc-font.woff");
+  font-weight: medium;
+}
+.center {
   display: flex;
   place-content: center;
   height: 100vh;
@@ -14,15 +19,24 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
+}
+
+.logo {
+  position: absolute;
+  width: 170px;
+  height: 100px;
+  left:30px;
+  color: rgb(66, 66, 243);
+  font-family: soc;
 }

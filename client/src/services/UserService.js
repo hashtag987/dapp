@@ -76,7 +76,6 @@ export class UserService extends React.Component {
       });
     const eve = await this.props.auth.events.UserCreated();
     console.log(eve);
-    alert("User created Successfully");
   };
 
   deluser = async (id, name) => {
