@@ -111,7 +111,7 @@ const Register = () => {
             pass_err.push(err.message.replaceAll('"', ""));
           }
         }
-        if (data.password !== data.confirmpassword) {
+        if (pass_err.length>0 && data.password !== data.confirmpassword) {
           setcpassworderror("Password doesn't match");
         }
         setpasswordcheck(pass_err);

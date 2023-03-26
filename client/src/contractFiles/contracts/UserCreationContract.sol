@@ -46,6 +46,10 @@ contract UserCreationContract {
         return user;
     }
 
+    function getSignature(string memory username) public view returns(Signature memory){
+        return userHashToSignature[username];
+    }
+
     function createUser(string memory username,string memory password,string memory masterPublicKey,string memory userToken) public returns(Message memory) {
         User memory user = User(username, password,masterPublicKey,userToken, false);
         addressToUser[msg.sender] = user;

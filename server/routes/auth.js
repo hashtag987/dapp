@@ -15,7 +15,7 @@ const {
 router.post("/createuser", async (req, res) => {
   try {
     const { name, confirmpassword, username, password, token } = req.body;
-    const { error } = validate({
+    const { error } = validateRegister({
       username: username,
       password: password,
       confirmpassword: confirmpassword,
@@ -35,6 +35,9 @@ router.post("/createuser", async (req, res) => {
       signature: signUser(userHash, password, msk),
       userHash: userHash,
     };
+    console.log(data.signature);
+    console.log(" ");
+    console.log(data.userHash);
     res
       .status(200)
       .send({ message: "Encryption is performed successfully", data: data });
@@ -47,11 +50,11 @@ router.post("/createuser", async (req, res) => {
 router.post("/verifyuser", async (req, res) => {
   try {
     const { username, password, mpk, signature } = req.body;
-    const userHash = generateUserHash(username);
-    const verified = verifyUser(userHash, password, mpk, signature);
+    console.log(req.body);
+    const verified = verifyUser(username, password, mpk, signature);
     res.status(200).send({
       message: "Decryption is performed successfully",
-      data: verified,
+      verified: verified,
     });
   } catch (error) {
     console.log(error);
@@ -73,7 +76,7 @@ router.post("/userexists", async (req, res) => {
   }
 });
 
-const validate = (data) => {
+const validateRegister = (data) => {
   const schema = Joi.object({
     name: Joi.string().max(30).required().label("Name"),
     confirmpassword: Joi.string().required().label("Conformation Password"),

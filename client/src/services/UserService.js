@@ -31,6 +31,13 @@ export class UserService extends React.Component {
     return resJson;
   };
 
+  getSignature = async (username) => {
+    const response = await this.props.auth.methods
+      .getSignature(username)
+      .call();
+    return Object.assign({}, response);
+  };
+
   sign = async (userHash, masterPublicKey, signature, account, password) => {
     await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
@@ -42,7 +49,7 @@ export class UserService extends React.Component {
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price)
+    console.log(next_gas_price);
     await this.props.auth.methods
       .addToSignature(userHash, masterPublicKey, signature)
       .send({
@@ -65,7 +72,7 @@ export class UserService extends React.Component {
       });
     console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price)
+    console.log(next_gas_price);
     await this.props.auth.methods
       .createUser(userName, password, masterPublicKey, token)
       .send({

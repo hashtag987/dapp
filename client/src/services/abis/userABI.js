@@ -214,6 +214,47 @@ export const userABI = [
         type: "string",
       },
     ],
+    name: "getSignature",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "userHash",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "masterPublicKey",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "signature",
+            type: "string",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct UserCreationContract.Signature",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "username",
+        type: "string",
+      },
+    ],
     name: "getUser",
     outputs: [
       {
