@@ -61,21 +61,11 @@ export const userABI = [
     inputs: [
       {
         internalType: "string",
-        name: "userHash",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "masterPublicKey",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "signature",
+        name: "username",
         type: "string",
       },
     ],
-    name: "addToSignature",
+    name: "userExists",
     outputs: [
       {
         components: [
@@ -95,39 +85,98 @@ export const userABI = [
         type: "tuple",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
+    constant: true,
   },
   {
     inputs: [
       {
         internalType: "string",
-        name: "password",
+        name: "username",
         type: "string",
       },
     ],
-    name: "changePass",
+    name: "getUser",
     outputs: [
       {
         components: [
           {
-            internalType: "int32",
-            name: "status",
-            type: "int32",
+            internalType: "string",
+            name: "username",
+            type: "string",
           },
           {
             internalType: "string",
-            name: "message",
+            name: "password",
             type: "string",
           },
+          {
+            internalType: "string",
+            name: "masterPublicKey",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "userToken",
+            type: "string",
+          },
+          {
+            internalType: "bool",
+            name: "isLoggedIn",
+            type: "bool",
+          },
         ],
-        internalType: "struct UserCreationContract.Message",
+        internalType: "struct UserCreationContract.User",
         name: "",
         type: "tuple",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "username",
+        type: "string",
+      },
+    ],
+    name: "getSignature",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "userHash",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "masterPublicKey",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "signature",
+            type: "string",
+          },
+          {
+            internalType: "bool",
+            name: "isValid",
+            type: "bool",
+          },
+        ],
+        internalType: "struct UserCreationContract.Signature",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
   },
   {
     inputs: [
@@ -179,11 +228,21 @@ export const userABI = [
     inputs: [
       {
         internalType: "string",
-        name: "password",
+        name: "userHash",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "masterPublicKey",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "signature",
         type: "string",
       },
     ],
-    name: "deleteUser",
+    name: "addToSignature",
     outputs: [
       {
         components: [
@@ -204,124 +263,6 @@ export const userABI = [
       },
     ],
     stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "username",
-        type: "string",
-      },
-    ],
-    name: "getSignature",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "string",
-            name: "userHash",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "masterPublicKey",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "signature",
-            type: "string",
-          },
-          {
-            internalType: "bool",
-            name: "isValid",
-            type: "bool",
-          },
-        ],
-        internalType: "struct UserCreationContract.Signature",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "username",
-        type: "string",
-      },
-    ],
-    name: "getUser",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "string",
-            name: "username",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "password",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "masterPublicKey",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "userToken",
-            type: "string",
-          },
-          {
-            internalType: "bool",
-            name: "isLoggedIn",
-            type: "bool",
-          },
-        ],
-        internalType: "struct UserCreationContract.User",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "username",
-        type: "string",
-      },
-    ],
-    name: "userExists",
-    outputs: [
-      {
-        components: [
-          {
-            internalType: "int32",
-            name: "status",
-            type: "int32",
-          },
-          {
-            internalType: "string",
-            name: "message",
-            type: "string",
-          },
-        ],
-        internalType: "struct UserCreationContract.Message",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
     type: "function",
   },
   {
@@ -358,6 +299,69 @@ export const userABI = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "password",
+        type: "string",
+      },
+    ],
+    name: "deleteUser",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "int32",
+            name: "status",
+            type: "int32",
+          },
+          {
+            internalType: "string",
+            name: "message",
+            type: "string",
+          },
+        ],
+        internalType: "struct UserCreationContract.Message",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "password",
+        type: "string",
+      },
+    ],
+    name: "changePass",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "int32",
+            name: "status",
+            type: "int32",
+          },
+          {
+            internalType: "string",
+            name: "message",
+            type: "string",
+          },
+        ],
+        internalType: "struct UserCreationContract.Message",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ];

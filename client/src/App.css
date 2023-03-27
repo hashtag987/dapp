@@ -49,3 +49,9 @@
   font-weight: bold;
   font-size: 50px;
 }
+
+.feed-header-logo{
+  color: #4a79f1 !important;
+  font-family: soc !important;
+  font-weight: bold !important;
+}

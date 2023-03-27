@@ -1,36 +1,39 @@
-import React,{useState} from "react";
-import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import AddIcon from "@mui/icons-material/Add";
+import React, { useState, useEffect } from "react";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import Avatar from "@mui/material/Avatar";
-import CheckIcon from '@mui/icons-material/Check';
 import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ImageIcon from "@mui/icons-material/Image";
-import WorkIcon from "@mui/icons-material/Work";
-import BeachAccessIcon from "@mui/icons-material/BeachAccess";
-const bull = (
-  <Box
-    component="span"
-    sx={{ display: "inline-block", mx: "2px", transform: "scale(0.8)" }}
-  >
-    •
-  </Box>
-);
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+// import { posts } from "./post";
+import { UserInfoService } from "../../services/UserInfoService";
 
-const Friends=()=> {
-  const [requested, setrequested] = useState({})
-  const handleClick = (event) => {
-    setrequested({ [event.currentTarget.id]: requested });
-    console.log(requested)
+const Friends = () => {
+  const [requested, setrequested] = useState({});
+  const [userInfo, setuserInfo] = useState(null);
+  const [users, setusers] = useState([]);
+  const getAllUsers = async () => {
+    if (userInfo != null) {
+      const allUsers = await userInfo.getAllusers();
+      setusers(allUsers);
+    }
+  };
+  useEffect(() => {
+    setuserInfo(new UserInfoService());
+  }, []);
+
+  useEffect(() => {
+    getAllUsers();
+  });
+
+  const handleClick = (user, event) => {
+    // event.preventDefault();
+    console.log(user);
+    console.log(event.currentTarget.id);
+    setrequested({ ...requested, [event.currentTarget.id]: true });
+    // console.log(requested);
   };
   return (
     <div className="cards">
@@ -45,22 +48,41 @@ const Friends=()=> {
           overflow: "auto",
         }}
       >
-        {[...new Array(12)].map((index) => (
+        {users.map((user, index) => (
           <div>
-            <ListItem key={index}>
+            <ListItem key={"fr" + index}>
               <ListItemAvatar>
                 <Avatar>H</Avatar>
               </ListItemAvatar>
-              <ListItemText primary="Arun" secondary="@arun123" />
-              <div id={index} onClick={handleClick}>
-                <PersonAddAlt1Icon                
+              <ListItemText primary={user.name} secondary={user.username} />
+              <div id={"fr" + index} onClick={(e) => handleClick(user, e)}>
+                {/* <PersonAddAlt1Icon
                   style={{
-                    cursor:"pointer",
+                    cursor: "pointer",
                     float: "right",
                     marginBottom: "8px",
                     fontSize: "20px",
                   }}
-                />
+                /> */}
+                {requested["fr" + index] ? (
+                  <HowToRegIcon
+                    style={{
+                      cursor: "pointer",
+                      float: "right",
+                      marginBottom: "8px",
+                      fontSize: "20px",
+                    }}
+                  />
+                ) : (
+                  <PersonAddAlt1Icon
+                    style={{
+                      cursor: "pointer",
+                      float: "right",
+                      marginBottom: "8px",
+                      fontSize: "20px",
+                    }}
+                  />
+                )}
               </div>
             </ListItem>
             <Divider variant="inset" component="li" />
@@ -69,5 +91,5 @@ const Friends=()=> {
       </List>
     </div>
   );
-}
+};
 export default Friends;

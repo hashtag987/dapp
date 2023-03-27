@@ -6,6 +6,7 @@ import Typewriter from "typewriter-effect";
 import axios from "axios";
 import { URL, STATUS_MESSAGE } from "../../constants";
 import Alertbox from "../../utils/AlertBox";
+import { UserInfoService } from "../../services/UserInfoService";
 const Register = () => {
   let account = "";
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Register = () => {
   const [message, setmessage] = useState("");
   const [severity, setseverity] = useState("success");
   const [user, setuser] = useState(null);
+  const [userInfo, setuserInfo] = useState(null);
 
   const [nameerror, setnameerror] = useState("");
   const [usernameerror, setusernameerror] = useState("");
@@ -20,6 +22,7 @@ const Register = () => {
   const [passwordcheck, setpasswordcheck] = useState([]);
   useEffect(() => {
     setuser(new UserService());
+    setuserInfo(new UserInfoService());
   }, []);
 
   const [data, setData] = useState({
@@ -90,6 +93,18 @@ const Register = () => {
           account,
           encData.passwordEnc
         );
+        await userInfo.addUserInfo(
+          data.name,
+          data.username,
+          encData.passwordEnc,
+          encData.masterPublicKey,
+          account
+        );
+        window.sessionStorage.setItem("name", data.name);
+        window.sessionStorage.setItem("username", data.username);
+        window.sessionStorage.setItem("token",)
+        const users = await userInfo.getAllusers();
+        console.log(users);
         setmessagealert(true);
         setmessage(STATUS_MESSAGE.REGISTER_SUCCESS);
         setseverity("success");
@@ -111,7 +126,7 @@ const Register = () => {
             pass_err.push(err.message.replaceAll('"', ""));
           }
         }
-        if (pass_err.length>0 && data.password !== data.confirmpassword) {
+        if (pass_err.length > 0 && data.password !== data.confirmpassword) {
           setcpassworderror("Password doesn't match");
         }
         setpasswordcheck(pass_err);

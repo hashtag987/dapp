@@ -25,7 +25,7 @@ router.post("/createuser", async (req, res) => {
       console.log(error.details);
       return res.status(400).send({ data: error.details });
     }
-    var { mpk, msk } = generateRSAKeyPair(username, password);
+    var { mpk, msk } = generateRSAKeyPair();
     const userHash = generateUserHash(username);
     const data = {
       nameEnc: RSAEncrypt(username, mpk, username).toString("base64"),

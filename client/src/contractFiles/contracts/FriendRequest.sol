@@ -7,6 +7,11 @@ contract FriendRequest {
         string message;
     }
 
+    struct Friends{
+        string userid;
+        string status;
+    }
+
     mapping(string => string[]) private userToFriend;
 
     //event friendAdded(address indexed userAddress, address indexed friendAddress);

@@ -114,12 +114,12 @@ export default function Post() {
             </Typography>
           </CardContent>
           <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
+            {/* <IconButton aria-label="add to favorites">
               <FavoriteIcon sx={{ fontSize: 20 }} />
             </IconButton>
             <IconButton aria-label="share" sx={{ fontSize: 15 }}>
               2
-            </IconButton>
+            </IconButton> */}
           </CardActions>
         </Card>
       ))}
