@@ -4,6 +4,7 @@ const { generateRSAKeyPair,RSAEncrypt,RSADecrypt,signUser,verifyUser,generateUse
 router.post("/createuser", async (req, res) => {
 	try {
 		const {username,password,token} = req.body;
+        console.log(req.body);
         var {mpk,msk}= generateRSAKeyPair(username,password);
         const userHash = generateUserHash(username);
         const data = {

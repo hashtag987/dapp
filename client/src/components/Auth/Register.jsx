@@ -75,6 +75,7 @@ const Register = () => {
         setseverity("success");
       }
     } catch (error) {
+      console.log(error);
       setmessagealert(true);
       setmessage(STATUS_MESSAGE.TRANSACTION_ERROR);
       setseverity("error");

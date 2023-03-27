@@ -16,13 +16,14 @@ const generateRSAKeyPair = () => {
 };
 
 const RSAEncrypt = (pdata, key) => {
+  console.log(pdata,key)
   return crypto.publicEncrypt(
     {
       key: key,
       padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
       oaepHash: "sha256",
     },
-    pdata
+    Buffer.from(pdata)
   );
 };
 
@@ -53,7 +54,7 @@ const signUser = (username, password,privateKey) => {
   console.log(sign);
   return sign
 };
-
+           
 const verifyUser = (username,password,publicKey,sign)=>{
   verifier = crypto.createVerify("RSA-SHA256");
   verifier.update(username);
