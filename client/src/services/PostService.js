@@ -17,7 +17,7 @@ export class PostService extends React.Component{
         this.createWeb3();
     }
 
-    getPost = async(post) => {
+    getPost = async(postId) => {
         
     }
 }

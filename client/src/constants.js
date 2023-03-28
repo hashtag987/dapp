@@ -7,12 +7,14 @@ export const URL = {
     DOMAIN:"http://localhost:5000",
     CREATE_USER:"/api/auth/createuser",
     VERIFY_USER:"/api/auth/verifyuser",
-    USER_EXISTS:"/api/auth/userexists"
+    USER_EXISTS:"/api/auth/userexists",
+    CREATE_POST:"/api/post/createPost"
 }
 
 //deployed contract addresses
 export const CONTRACT = {
     USER_CREATION_CONTRACT:"0x26B1A37963bB01f712bA32025ECDd12BD42e2492",
+    POST_CONTRACT:"0xc1716DA0F7884D77882a62195Ca63d5810DBB823"
 }
 
 export const STATUS_MESSAGE={
