@@ -20,6 +20,7 @@ import Fab from "@mui/material/Fab";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Fade from "@mui/material/Fade";
 import { LOGO_TEXT } from "../../constants";
+import Notifications from "../../utils/Notifications";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -112,7 +113,9 @@ ScrollTop.propTypes = {
 export default function Navbar(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
@@ -214,6 +217,7 @@ export default function Navbar(props) {
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <IconButton
+                  onClick={handleOpen}
                   size="large"
                   aria-label="show 17 new notifications"
                   color="inherit"
@@ -224,6 +228,7 @@ export default function Navbar(props) {
                     />
                   </Badge>
                 </IconButton>
+                <Notifications open={open} handleClose={handleClose} />
                 <IconButton
                   size="large"
                   edge="end"

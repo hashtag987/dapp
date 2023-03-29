@@ -55,3 +55,10 @@
   font-family: soc !important;
   font-weight: bold !important;
 }
+
+.not-button{
+  height: 30px !important;
+  text-transform: none !important;
+  width: 60px !important;
+  margin: 5px !important;
+}
