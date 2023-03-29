@@ -90,7 +90,13 @@ export const userABI = [
     "constant": true
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "username",
+        "type": "string"
+      }
+    ],
     "name": "getUser",
     "outputs": [
       {

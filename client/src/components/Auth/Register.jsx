@@ -75,9 +75,12 @@ const Register = () => {
           return;
         }
         const encData = res.data.data;
+        console.log("enc data");
+        console.log(encData);
         await user.create_user(encData.passwordEnc).then((value) => {
           account = value;
         });
+        console.log("register account ",account);
         data.token = "sampletoken";
         await user.adduser(
           encData.nameEnc,
@@ -106,6 +109,7 @@ const Register = () => {
         // console.log();
         window.sessionStorage.setItem("name", data.name);
         window.sessionStorage.setItem("username", data.username);
+        window.sessionStorage.setItem("userHash",encData.nameEnc);
         window.sessionStorage.setItem("token", encData.temp);
         window.sessionStorage.setItem("mpk",encData.masterPublicKey);
         window.sessionStorage.setItem("userId",account);

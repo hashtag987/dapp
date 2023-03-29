@@ -48,7 +48,7 @@ const Friends = () => {
           overflow: "auto",
         }}
       >
-        {users.map((user, index) => (
+        {users.filter((user)=>user.username!=window.sessionStorage.getItem("username")).map((user, index) => (
           <div>
             <ListItem key={"fr" + index}>
               <ListItemAvatar>

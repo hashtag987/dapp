@@ -68,19 +68,21 @@ const Login = () => {
         if (res.status === 200 && res.data.verified) {
           // console.log("deoiiiiiii")
           const userInfo = await userinfo.getUser(data.username);
+          console.log("user info ");
           console.log(userInfo)
-          try {
-            console.log(userInfo.password);
-            const trace = await user.getUser(userInfo.userId, data.password);
-          } catch (error) {
-            console.log(error)
-          }
-          console.log(trace)
+          //try {
+            // const encPW=await axios.post(URL.DOMAIN+URL.ENCRYPT_PASSWORD,{password:data.password,mpk:userInfo.masterPublicKey});
+            // console.log(encPW.data.encryptedPW);
+            const trace = await user.getUser(userData.data.userHash);
+            console.log(trace)
+          // } catch (error) {
+          //   console.log(error)
+          // }
           window.sessionStorage.setItem("name", userInfo.name);
           window.sessionStorage.setItem("username", userInfo.username);
           window.sessionStorage.setItem("mpk", userInfo.masterPublicKey);
           window.sessionStorage.setItem("userId", userInfo.userId);
-          window.sessionStorage.setItem("token", trace.trace);
+          //window.sessionStorage.setItem("token", trace.trace);
           setmessagealert(true);
           setmessage(STATUS_MESSAGE.LOGIN_SUCCESS);
           setseverity("success");

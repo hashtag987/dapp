@@ -44,15 +44,15 @@ contract UserCreationContract {
         return message;
     }
 
-    // function getUser(string memory username) public view returns(User memory){
-    //     address userAddress = usernameToAddress[username];
-    //     User memory user = addressToUser[userAddress];
-    //     return user;
-    // }
-
-    function getUser() public view returns (User memory) {
-        return addressToUser[msg.sender];
+    function getUser(string memory username) public view returns(User memory){
+        address userAddress = usernameToAddress[username];
+        User memory user = addressToUser[userAddress];
+        return user;
     }
+
+    // function getUser() public view returns (User memory) {
+    //     return addressToUser[msg.sender];
+    // }
 
     function getSignature(
         string memory username

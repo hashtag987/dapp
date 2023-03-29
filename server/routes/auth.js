@@ -28,7 +28,7 @@ router.post("/createuser", async (req, res) => {
     var { mpk, msk } = generateRSAKeyPair();
     const userHash = generateUserHash(username);
     const data = {
-      nameEnc: RSAEncrypt(username, mpk, username).toString("base64"),
+      nameEnc: userHash,
       passwordEnc: RSAEncrypt(password, mpk).toString("base64"),
       tokenEnc: RSAEncrypt(token, mpk).toString("base64"),
       masterPublicKey: mpk,
@@ -71,6 +71,19 @@ router.post("/userexists", async (req, res) => {
     res.status(200).send({
       message: "Decryption is performed successfully",
       userHash: userHash,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/encryptPassword", async(req,res) => {
+  try {
+    const { password,mpk } = req.body;    
+    res.status(200).send({
+      message: "Decryption is performed successfully",
+      encryptedPW: RSAEncrypt(password,mpk).toString("base64"),
     });
   } catch (error) {
     console.log(error);

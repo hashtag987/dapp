@@ -16,9 +16,12 @@ export class UserService extends React.Component {
     this.createWeb3();
   }
 
-  getUser = async (account, password) => {
+  getUser = async (username) => {
     // try {
-    const user = await this.props.auth.methods.getUser().send({ from: account });
+      //console.log(account);
+    //await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    
+    const user = await this.props.auth.methods.getUser(username).call();
     console.log(user)
     return Object.assign({}, user);
     // } catch (error) {
@@ -68,7 +71,7 @@ export class UserService extends React.Component {
 
   adduser = async (userName, password, masterPublicKey, token, trace, account) => {
     // try {
-    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+      await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
       .createUser(userName, password, masterPublicKey, token, trace)
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
