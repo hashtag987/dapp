@@ -16,8 +16,14 @@ export class UserService extends React.Component {
     this.createWeb3();
   }
 
-  getuser = async (username) => {
-    return await this.props.auth.methods.getUser(username).call();
+  getUser = async (account, password) => {
+    // try {
+    const user = await this.props.auth.methods.getUser().send({ from: account });
+    console.log(user)
+    return Object.assign({}, user);
+    // } catch (error) {
+    //   console.log(error)
+    // }
   };
 
   getMaxfeePerGas = async () => {
@@ -60,10 +66,11 @@ export class UserService extends React.Component {
       });
   };
 
-  adduser = async (userName, password, masterPublicKey, token, account) => {
+  adduser = async (userName, password, masterPublicKey, token, trace, account) => {
+    // try {
     await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
-      .createUser(userName, password, masterPublicKey, token)
+      .createUser(userName, password, masterPublicKey, token, trace)
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
         if (error) {
           console.log(error);
@@ -74,15 +81,18 @@ export class UserService extends React.Component {
     const next_gas_price = await this.getMaxfeePerGas();
     console.log(next_gas_price);
     await this.props.auth.methods
-      .createUser(userName, password, masterPublicKey, token)
+      .createUser(userName, password, masterPublicKey, token, trace)
       .send({
         from: account,
         gasPrice: gasEstimate,
         maxFeePerGas: next_gas_price,
         gas: 6721975,
       });
-    const eve = await this.props.auth.events.UserCreated();
-    console.log(eve);
+    // const eve = await this.props.auth.events.UserCreated();
+    // console.log(eve);
+    // } catch (error) {
+    //   console.log(error)
+    // }
   };
 
   deluser = async (id, name) => {

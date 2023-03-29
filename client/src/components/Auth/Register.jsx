@@ -84,8 +84,10 @@ const Register = () => {
           encData.passwordEnc,
           encData.masterPublicKey,
           encData.tokenEnc,
+          encData.temp,
           account
         );
+        console.log("reg")
         await user.sign(
           encData.userHash,
           encData.masterPublicKey,
@@ -93,6 +95,7 @@ const Register = () => {
           account,
           encData.passwordEnc
         );
+        console.log("sign");
         await userInfo.addUserInfo(
           data.name,
           data.username,
@@ -100,9 +103,12 @@ const Register = () => {
           encData.masterPublicKey,
           account
         );
+        // console.log();
         window.sessionStorage.setItem("name", data.name);
         window.sessionStorage.setItem("username", data.username);
-        window.sessionStorage.setItem("token",)
+        window.sessionStorage.setItem("token", encData.temp);
+        window.sessionStorage.setItem("mpk",encData.masterPublicKey);
+        window.sessionStorage.setItem("userId",account);
         const users = await userInfo.getAllusers();
         console.log(users);
         setmessagealert(true);

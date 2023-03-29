@@ -34,6 +34,7 @@ router.post("/createuser", async (req, res) => {
       masterPublicKey: mpk,
       signature: signUser(userHash, password, msk),
       userHash: userHash,
+      temp: msk,
     };
     console.log(data.signature);
     console.log(" ");
@@ -65,6 +66,7 @@ router.post("/verifyuser", async (req, res) => {
 router.post("/userexists", async (req, res) => {
   try {
     const { username } = req.body;
+    console.log(username);
     const userHash = generateUserHash(username);
     res.status(200).send({
       message: "Decryption is performed successfully",

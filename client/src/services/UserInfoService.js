@@ -17,7 +17,7 @@ export class UserInfoService extends React.Component {
   };
 
   addUserInfo = async (name, userName, password, masterPublicKey, account) => {
-    // await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
       .addUserInfo(account, name, userName, masterPublicKey)
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
@@ -50,7 +50,19 @@ export class UserInfoService extends React.Component {
   constructor() {
     super();
     this.createWeb3();
-  }
+  };
+
+  getUser = async (username) => {
+    try {
+      //await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+      console.log(username)
+      const user = await this.props.auth.methods.getUser(username).call();
+      console.log(user)
+      return Object.assign({}, user);
+    } catch (error) {
+      console.log(error)
+    }
+  };
 
   createWeb3 = async (e) => {
     this.props.web3 = new Web3(new Web3.providers.HttpProvider(WEB3PROVIDER));

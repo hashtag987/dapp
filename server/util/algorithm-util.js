@@ -66,6 +66,10 @@ const generateUserHash=(username)=>{
   return cryptoJs.SHA256(username).toString();
 }
 
+const generateFriendRequestId=()=> {
+  return crypto.randomBytes(32).toString("base64");
+}
+
 module.exports = {
   generateRSAKeyPair,
   RSADecrypt,
@@ -73,5 +77,6 @@ module.exports = {
   createAccountInBlockChain,
   signUser,
   verifyUser,
-  generateUserHash
+  generateUserHash,
+  generateFriendRequestId,
 };

@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 contract UserManagementContract {
     struct User {
+        string userId;
         string name;
         string username;
         string masterPublicKey;
@@ -21,7 +22,7 @@ contract UserManagementContract {
         string memory username,
         string memory masterPublickey
     ) public returns (Message memory) {
-        User memory user = User(name, username, masterPublickey);
+        User memory user = User(userid, name, username, masterPublickey);
         addressToUser[userid] = user;
         addressLUT.push(userid);
         Message memory message = Message(200, "Success");
@@ -36,7 +37,12 @@ contract UserManagementContract {
         return users;
     }
 
-    function getUser(string memory userid) public view returns(User memory){
-        return addressToUser[userid];
+    function getUser(string memory username) public view returns(User memory){
+        for(uint i=0;i<addressLUT.length;i++) {
+            if(keccak256(bytes(addressToUser[addressLUT[i]].username)) == keccak256(bytes(username))) {
+                return addressToUser[addressLUT[i]];
+            }
+        }
+        return addressToUser["abc"];
     }
 }

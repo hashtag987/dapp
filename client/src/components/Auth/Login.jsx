@@ -6,17 +6,20 @@ import Typewriter from "typewriter-effect";
 import axios from "axios";
 import { URL, STATUS_MESSAGE } from "../../constants";
 import Alertbox from "../../utils/AlertBox";
+import { UserInfoService } from "../../services/UserInfoService";
 const Login = () => {
   const navigate = useNavigate();
   const [messagealert, setmessagealert] = useState(false);
   const [message, setmessage] = useState("");
   const [severity, setseverity] = useState("success");
   const [user, setuser] = useState(null);
+  const [userinfo, setuserinfo] = useState(null);
 
   const [usernameerror, setusernameerror] = useState("");
   const [passworderror, setpassworderror] = useState("");
   useEffect(() => {
     setuser(new UserService());
+    setuserinfo(new UserInfoService());
   }, []);
 
   const [data, setData] = useState({
@@ -63,6 +66,21 @@ const Login = () => {
         });
         console.log(res);
         if (res.status === 200 && res.data.verified) {
+          // console.log("deoiiiiiii")
+          const userInfo = await userinfo.getUser(data.username);
+          console.log(userInfo)
+          try {
+            console.log(userInfo.password);
+            const trace = await user.getUser(userInfo.userId, data.password);
+          } catch (error) {
+            console.log(error)
+          }
+          console.log(trace)
+          window.sessionStorage.setItem("name", userInfo.name);
+          window.sessionStorage.setItem("username", userInfo.username);
+          window.sessionStorage.setItem("mpk", userInfo.masterPublicKey);
+          window.sessionStorage.setItem("userId", userInfo.userId);
+          window.sessionStorage.setItem("token", trace.trace);
           setmessagealert(true);
           setmessage(STATUS_MESSAGE.LOGIN_SUCCESS);
           setseverity("success");
