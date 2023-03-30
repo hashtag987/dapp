@@ -19,8 +19,15 @@ import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Fab from "@mui/material/Fab";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Fade from "@mui/material/Fade";
-import { LOGO_TEXT } from "../../constants";
-import Notifications from "../../utils/Notifications";
+import { LOGO_TEXT, REUSABLE } from "../../constants";
+import ModalComponent from "../../utils/ModalComponent";
+import { Link, useNavigate } from "react-router-dom";
+import { URL, STATUS_MESSAGE } from "../../constants";
+import { useState, useEffect } from "react";
+import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
+import { FriendService } from "../../services/FriendService";
+import { UserInfoService } from "../../services/UserInfoService";
+
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -111,13 +118,42 @@ ScrollTop.propTypes = {
   window: PropTypes.func,
 };
 export default function Navbar(props) {
+  const navigate = useNavigate();
+  const [messagealert, setmessagealert] = useState(false);
+  const [message, setmessage] = useState("");
+  const [severity, setseverity] = useState("success");
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+  const [friends, setfriends] = useState(null);
+  const [uinfo, setuinfo] = useState(null);
+  useEffect(() => {
+    setfriends(new FriendService());
+    setuinfo(new UserInfoService());
+  }, []);
+
+  useEffect(() => {
+    getRequests();
+  }, [friends]);
+
+  const [requests, setrequests] = useState([]);
+  // const [content, setcontent] = useState([]);
+
+  const handleOpen = (event) => {
+    if(event.currentTarget.id=="notifications") {
+      setusage(REUSABLE.NOTIFICATION);
+      setcontent(requests);
+    } else {
+      setusage(REUSABLE.FRIENDS);
+    }
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  const [usage, setusage] = useState("")
+  const [content, setcontent] = useState([])
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -134,6 +170,34 @@ export default function Navbar(props) {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+  const getRequests = async () => {
+    let reqObjects=[];
+    const requests=await friends.getPendingRequests(window.sessionStorage.getItem("userId"));
+    console.log(requests);
+    for(let request of requests) {
+      const requestJSON=Object.assign({},request);
+      if(requestJSON.userid.length>0) {
+        const userInfo= await uinfo.getUserById(requestJSON.userid);
+        reqObjects.push(userInfo);
+        console.log(userInfo);
+      }
+    }
+    setrequests(reqObjects);
+  };
+
+  const logout = () => {
+    try {
+      setmessagealert(true);
+      setmessage(STATUS_MESSAGE.LOGOUT_SUCCESS);
+      setseverity("success");
+      navigate("/login");
+    } catch (error) {
+      setmessagealert(true);
+      setmessage(STATUS_MESSAGE.TRANSACTION_ERROR);
+      setseverity("error");
+    }
   };
 
   const menuId = "primary-search-account-menu";
@@ -182,7 +246,7 @@ export default function Navbar(props) {
       <MenuItem onClick={handleMenuClose} style={{ fontSize: 13 }}>
         My Account
       </MenuItem>
-      <MenuItem onClick={handleMenuClose} style={{ fontSize: 13 }}>
+      <MenuItem onClick={logout} style={{ fontSize: 13 }}>
         Log out
       </MenuItem>
     </Menu>
@@ -216,11 +280,23 @@ export default function Navbar(props) {
               </Search>
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
+              <IconButton
+                  onClick={handleOpen}
+                  size="large"
+                  aria-label="show 17 new notifications"
+                  color="inherit"
+                  id="friends"
+                >
+                  <PeopleAltRoundedIcon
+                      style={{ fontSize: 20, color: "#4a79f1" }}
+                  />
+                </IconButton>
                 <IconButton
                   onClick={handleOpen}
                   size="large"
                   aria-label="show 17 new notifications"
                   color="inherit"
+                  id="notifications"
                 >
                   <Badge badgeContent={17} color="error">
                     <NotificationsIcon
@@ -228,7 +304,7 @@ export default function Navbar(props) {
                     />
                   </Badge>
                 </IconButton>
-                <Notifications open={open} handleClose={handleClose} />
+                <ModalComponent open={open} handleClose={handleClose} usage={usage} contents={content} />
                 <IconButton
                   size="large"
                   edge="end"

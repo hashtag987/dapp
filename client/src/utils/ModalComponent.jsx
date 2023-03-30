@@ -10,7 +10,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import { Button } from "@mui/material";
-const Notifications = ({ open, handleClose, notifications }) => {
+import { REUSABLE } from "../constants";
+
+const ModalComponent = ({ open, handleClose, contents, usage }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -43,20 +45,20 @@ const Notifications = ({ open, handleClose, notifications }) => {
         <Fade in={open}>
           <Box sx={style}>
             <List>
-              {[...new Array(10)].map(() => (
+              {contents.length>0 && contents.map((content) => (
                 <div>
                   <ListItem>
                     <ListItemAvatar>
                       <Avatar>H</Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={"dssf"} secondary={"sdfdsf"} />
+                    <ListItemText primary={content.name} secondary={content.username} />
                     <div id={"fgfh"}>
                       <Button className="not-button" variant="contained">
-                        Accept
+                        {(usage==REUSABLE.NOTIFICATION)? "Accept":"Remove"}
                       </Button>
-                      <Button className="not-button" variant="contained">
+                      {(usage==REUSABLE.NOTIFICATION)? <Button className="not-button" variant="contained">
                         Reject
-                      </Button>
+                      </Button>:<></>}
                     </div>
                   </ListItem>
                   <Divider variant="inset" component="li" />
@@ -70,4 +72,4 @@ const Notifications = ({ open, handleClose, notifications }) => {
   );
 };
 
-export default Notifications;
+export default ModalComponent;

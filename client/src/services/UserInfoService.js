@@ -64,6 +64,16 @@ export class UserInfoService extends React.Component {
     }
   };
 
+  getUserById = async (userId) => {
+    try {
+      const user = await this.props.auth.methods.getUserById(userId).call();
+      //console.log(user)
+      return Object.assign({}, user);
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
   createWeb3 = async (e) => {
     this.props.web3 = new Web3(new Web3.providers.HttpProvider(WEB3PROVIDER));
     this.props.auth = new this.props.web3.eth.Contract(

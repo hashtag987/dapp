@@ -9,11 +9,13 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 // import { posts } from "./post";
 import { UserInfoService } from "../../services/UserInfoService";
+import { FriendService } from "../../services/FriendService";
 
 const Friends = () => {
   const [requested, setrequested] = useState({});
   const [userInfo, setuserInfo] = useState(null);
   const [users, setusers] = useState([]);
+  const [friends, setfriends] = useState(null);
   const getAllUsers = async () => {
     if (userInfo != null) {
       const allUsers = await userInfo.getAllusers();
@@ -22,17 +24,21 @@ const Friends = () => {
   };
   useEffect(() => {
     setuserInfo(new UserInfoService());
+    setfriends(new FriendService());
   }, []);
 
   useEffect(() => {
     getAllUsers();
   });
 
-  const handleClick = (user, event) => {
+  const handleClick = async (user, event) => {
     // event.preventDefault();
+    setrequested({ ...requested, [event.currentTarget.id]: true });
     console.log(user);
     console.log(event.currentTarget.id);
-    setrequested({ ...requested, [event.currentTarget.id]: true });
+    const userId=window.sessionStorage.getItem("userId");
+    const password=window.sessionStorage.getItem("password");
+    const addFriend=await friends.addFriend(userId,password,user.userId,false);
     // console.log(requested);
   };
   return (

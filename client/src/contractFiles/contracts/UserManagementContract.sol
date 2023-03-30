@@ -45,4 +45,8 @@ contract UserManagementContract {
         }
         return addressToUser["abc"];
     }
+
+    function getUserById(string memory userId) public view returns(User memory){
+        return addressToUser[userId];
+    }
 }

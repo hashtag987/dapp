@@ -28,14 +28,14 @@ contract FriendRequest {
         return message;
     }
 
-    function changeStatus(
+    function approveRequest(
         string memory userId,
         string memory friendId
     ) public {
         for(uint i=0;i<userToFriend[userId].length;i++) {
             if(keccak256(bytes(userToFriend[userId][i].userid)) == keccak256(bytes(friendId))) {
                 Friend storage change=userToFriend[userId][i];
-                change.status=(change.status==1)? 2:1;
+                change.status=1;
             }
         }
     }
@@ -49,7 +49,14 @@ contract FriendRequest {
     function getFriends(
         string memory userId
     ) public view returns (Friend[] memory) {
-        return userToFriend[userId];
+        Friend[] memory friend=new Friend[](addressLUT.length);
+        uint256 index=0;
+        for(uint j=0;j<userToFriend[userId].length;j++) {
+            if(userToFriend[userId][j].status==1) {
+                friend[index++]=userToFriend[userId][j];
+            }
+        }
+        return friend;
     }
 
     function getPendingRequests(
@@ -65,32 +72,16 @@ contract FriendRequest {
         return friend;
     }
 
-    // function removeFriend(
-    //     string memory user,
-    //     string memory friend
-    // ) public returns (Message memory) {
-    //     Message memory message;
-    //     uint256 index = findIndex(userToFriend[user], friend);
-    //     for (uint i = index; i < userToFriend[user].length - 1; i++) {
-    //         userToFriend[user][i] = userToFriend[user][i + 1];
-    //     }
-
-    //     delete userToFriend[user][userToFriend[user].length - 1];
-    //     userToFriend[user].pop();
-
-    //     message = Message(200, "Friend removed!");
-    //     return message;
-    // }
-
-    // function findIndex(
-    //     string[] memory arr,
-    //     string memory userId
-    // ) internal pure returns (uint256) {
-    //     for (uint256 i = 0; i < arr.length; i++) {
-    //         if (keccak256(bytes(arr[i])) == keccak256(bytes(userId))) {
-    //             return i;
-    //         }
-    //     }
-    //     return arr.length;
-    // }
+    function removeFriend(
+        string memory user,
+        string memory friend
+    ) public returns (Message memory) {
+        for (uint i = 0; i < userToFriend[user].length ; i++) {
+            if(keccak256(bytes(userToFriend[user][i].userid)) == keccak256(bytes(friend))) {
+                delete userToFriend[user][i];
+                return Message(200,"Friend removed successfully!");
+            }
+        }
+        return Message(500, "Internal server error!");
+    }
 }

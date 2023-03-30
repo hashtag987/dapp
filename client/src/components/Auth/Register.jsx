@@ -7,6 +7,8 @@ import axios from "axios";
 import { URL, STATUS_MESSAGE } from "../../constants";
 import Alertbox from "../../utils/AlertBox";
 import { UserInfoService } from "../../services/UserInfoService";
+import { FriendService } from "../../services/FriendService";
+
 const Register = () => {
   let account = "";
   const navigate = useNavigate();
@@ -20,9 +22,11 @@ const Register = () => {
   const [usernameerror, setusernameerror] = useState("");
   const [cpassworderror, setcpassworderror] = useState("");
   const [passwordcheck, setpasswordcheck] = useState([]);
+  const [friends, setfriends] = useState(null);
   useEffect(() => {
     setuser(new UserService());
     setuserInfo(new UserInfoService());
+    setfriends(new FriendService());
   }, []);
 
   const [data, setData] = useState({
@@ -106,6 +110,10 @@ const Register = () => {
           encData.masterPublicKey,
           account
         );
+        await friends.addUserId(
+          account,
+          encData.passwordEnc
+        );
         // console.log();
         window.sessionStorage.setItem("name", data.name);
         window.sessionStorage.setItem("username", data.username);
@@ -113,6 +121,7 @@ const Register = () => {
         window.sessionStorage.setItem("token", encData.temp);
         window.sessionStorage.setItem("mpk",encData.masterPublicKey);
         window.sessionStorage.setItem("userId",account);
+        window.sessionStorage.setItem("password",encData.passwordEnc);
         const users = await userInfo.getAllusers();
         console.log(users);
         setmessagealert(true);
@@ -123,6 +132,7 @@ const Register = () => {
         }, 2000);
       }
     } catch (error) {
+      console.log(error)
       if (error.response) {
         let pass_err = [];
         for (let err of error.response.data.data) {
