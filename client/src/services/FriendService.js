@@ -71,7 +71,7 @@ export class FriendService extends React.Component {
   removeFriend = async (account, password, friendId) => {
     await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
-      .removeFriend(account, password, friendId)
+      .removeFriend(account, friendId)
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
         if (error) {
           console.log(error);
@@ -82,7 +82,7 @@ export class FriendService extends React.Component {
     const next_gas_price = await this.getMaxfeePerGas();
     console.log(next_gas_price);
     await this.props.auth.methods
-      .removeFriend(account, password, friendId)
+      .removeFriend(account, friendId)
       .send({
         from: account,
         gasPrice: gasEstimate,
@@ -117,6 +117,29 @@ export class FriendService extends React.Component {
     } catch (error) {
       console.log(error)
     }
+  };
+
+   approveRequest= async (account, password, friendId) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    const gasEstimate = await this.props.auth.methods
+      .approveRequest(account, friendId)
+      .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+        }
+        if (gasAmount === 6721975) console.log("Method ran out of gas");
+      });
+    console.log(gasEstimate);
+    const next_gas_price = await this.getMaxfeePerGas();
+    console.log(next_gas_price);
+    await this.props.auth.methods
+      .approveRequest(account, friendId)
+      .send({
+        from: account,
+        gasPrice: gasEstimate,
+        maxFeePerGas: next_gas_price,
+        gas: 6721975,
+      });
   };
 
   createWeb3 = async (e) => {

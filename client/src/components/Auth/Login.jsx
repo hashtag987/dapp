@@ -73,8 +73,8 @@ const Login = () => {
           //try {
             // const encPW=await axios.post(URL.DOMAIN+URL.ENCRYPT_PASSWORD,{password:data.password,mpk:userInfo.masterPublicKey});
             // console.log(encPW.data.encryptedPW);
-            const trace = await user.getUser(userData.data.userHash);
-            console.log(trace)
+            const userDetails = await user.getUser(userData.data.userHash);
+            //console.log(trace)
           // } catch (error) {
           //   console.log(error)
           // }
@@ -82,7 +82,8 @@ const Login = () => {
           window.sessionStorage.setItem("username", userInfo.username);
           window.sessionStorage.setItem("mpk", userInfo.masterPublicKey);
           window.sessionStorage.setItem("userId", userInfo.userId);
-          //window.sessionStorage.setItem("token", trace.trace);
+          window.sessionStorage.setItem("token", userDetails.trace);
+          window.sessionStorage.setItem("password", userDetails.password);
           setmessagealert(true);
           setmessage(STATUS_MESSAGE.LOGIN_SUCCESS);
           setseverity("success");

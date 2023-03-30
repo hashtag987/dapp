@@ -12,7 +12,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import { Button } from "@mui/material";
 import { REUSABLE } from "../constants";
 
-const ModalComponent = ({ open, handleClose, contents, usage }) => {
+const ModalComponent = ({ open, handleClose, contents, usage, approveRequest, removeFriend }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -53,12 +53,12 @@ const ModalComponent = ({ open, handleClose, contents, usage }) => {
                     </ListItemAvatar>
                     <ListItemText primary={content.name} secondary={content.username} />
                     <div id={"fgfh"}>
-                      <Button className="not-button" variant="contained">
-                        {(usage==REUSABLE.NOTIFICATION)? "Accept":"Remove"}
-                      </Button>
-                      {(usage==REUSABLE.NOTIFICATION)? <Button className="not-button" variant="contained">
-                        Reject
+                      {(usage==REUSABLE.NOTIFICATION)? <Button className="not-button" variant="contained" onClick={(e)=>approveRequest(e,content)}>
+                        Accept
                       </Button>:<></>}
+                      <Button className="not-button" variant="contained" onClick={(e)=>removeFriend(e,content)}>
+                        {(usage==REUSABLE.NOTIFICATION)? "Reject":"Remove"}
+                      </Button>
                     </div>
                   </ListItem>
                   <Divider variant="inset" component="li" />

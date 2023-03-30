@@ -127,6 +127,11 @@ export default function Navbar(props) {
   const [open, setOpen] = React.useState(false);
   const [friends, setfriends] = useState(null);
   const [uinfo, setuinfo] = useState(null);
+  const [usage, setusage] = useState("")
+  const [content, setcontent] = useState([])
+  const [requests, setrequests] = useState([]);
+  const [myFriends, setmyFriends] = useState([]);
+
   useEffect(() => {
     setfriends(new FriendService());
     setuinfo(new UserInfoService());
@@ -136,24 +141,23 @@ export default function Navbar(props) {
     getRequests();
   }, [friends]);
 
-  const [requests, setrequests] = useState([]);
-  // const [content, setcontent] = useState([]);
+  useEffect(() => {
+    getFriends();
+  }, [friends]);
 
   const handleOpen = (event) => {
-    if(event.currentTarget.id=="notifications") {
+    if (event.currentTarget.id == "notifications") {
       setusage(REUSABLE.NOTIFICATION);
       setcontent(requests);
     } else {
       setusage(REUSABLE.FRIENDS);
+      setcontent(myFriends);
     }
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const [usage, setusage] = useState("")
-  const [content, setcontent] = useState([])
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -173,18 +177,45 @@ export default function Navbar(props) {
   };
 
   const getRequests = async () => {
-    let reqObjects=[];
-    const requests=await friends.getPendingRequests(window.sessionStorage.getItem("userId"));
-    console.log(requests);
-    for(let request of requests) {
-      const requestJSON=Object.assign({},request);
-      if(requestJSON.userid.length>0) {
-        const userInfo= await uinfo.getUserById(requestJSON.userid);
+    let reqObjects = [];
+    const requests = await friends.getPendingRequests(window.sessionStorage.getItem("userId"));
+    //console.log(requests);
+    for (let request of requests) {
+      const requestJSON = Object.assign({}, request);
+      if (requestJSON.userid.length > 0) {
+        const userInfo = await uinfo.getUserById(requestJSON.userid);
         reqObjects.push(userInfo);
         console.log(userInfo);
       }
     }
     setrequests(reqObjects);
+  };
+
+  const getFriends = async () => {
+    let friendList = [];
+    const requests = await friends.getFriends(window.sessionStorage.getItem("userId"));
+    console.log("req", requests);
+    for (let friend of requests) {
+      const friendJSON = Object.assign({}, friend);
+      if (friendJSON.userid.length > 0) {
+        const userInfo = await uinfo.getUserById(friendJSON.userid);
+        friendList.push(userInfo);
+        //console.log(userInfo);
+      }
+    }
+    setmyFriends(friendList);
+  };
+
+  const approveRequest = async (event, user) => {
+    console.log(user);
+    const approval = await friends.approveRequest(window.sessionStorage.getItem("userId"), window.sessionStorage.getItem("password"), user.userId);
+    console.log("approve request success");
+  };
+
+  const removeFriend = async (event, user) => {
+    console.log(user);
+    const reject = await friends.removeFriend(window.sessionStorage.getItem("userId"), window.sessionStorage.getItem("password"), user.userId);
+    console.log("reject request success");
   };
 
   const logout = () => {
@@ -280,7 +311,7 @@ export default function Navbar(props) {
               </Search>
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
-              <IconButton
+                <IconButton
                   onClick={handleOpen}
                   size="large"
                   aria-label="show 17 new notifications"
@@ -288,7 +319,7 @@ export default function Navbar(props) {
                   id="friends"
                 >
                   <PeopleAltRoundedIcon
-                      style={{ fontSize: 20, color: "#4a79f1" }}
+                    style={{ fontSize: 20, color: "#4a79f1" }}
                   />
                 </IconButton>
                 <IconButton
@@ -298,13 +329,13 @@ export default function Navbar(props) {
                   color="inherit"
                   id="notifications"
                 >
-                  <Badge badgeContent={17} color="error">
+                  <Badge badgeContent={requests.length} color="error">
                     <NotificationsIcon
                       style={{ fontSize: 20, color: "#4a79f1" }}
                     />
                   </Badge>
                 </IconButton>
-                <ModalComponent open={open} handleClose={handleClose} usage={usage} contents={content} />
+                <ModalComponent open={open} handleClose={handleClose} usage={usage} contents={content} approveRequest={approveRequest} removeFriend={removeFriend} />
                 <IconButton
                   size="large"
                   edge="end"
