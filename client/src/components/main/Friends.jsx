@@ -47,8 +47,10 @@ const Friends = ({ requests, myfriends }) => {
   }, []);
 
   useEffect(() => {
-    getRecommendations();
-  });
+    if(friends!=null){
+      getRecommendations();
+    }
+  },[friends]);
 
   const handleClick = async (user, event) => {
     // event.preventDefault();
@@ -86,7 +88,7 @@ const Friends = ({ requests, myfriends }) => {
             <div>
               <ListItem key={"fr" + index}>
                 <ListItemAvatar>
-                  <Avatar>H</Avatar>
+                  <Avatar>{user.username.charAt(0).toUpperCase()}</Avatar>
                 </ListItemAvatar>
                 <ListItemText primary={user.name} secondary={user.username} />
                 <div id={"fr" + index} onClick={(e) => handleClick(user, e)}>

@@ -128,7 +128,7 @@ const Register = () => {
         setmessage(STATUS_MESSAGE.REGISTER_SUCCESS);
         setseverity("success");
         setTimeout(() => {
-          navigate("/home");
+          navigate("/home/" +  data.username);
         }, 2000);
       }
     } catch (error) {

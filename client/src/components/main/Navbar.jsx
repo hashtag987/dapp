@@ -138,11 +138,15 @@ export default function Navbar(props) {
   }, []);
 
   useEffect(() => {
-    getRequests();
+    if (friends != null) {
+      getRequests();
+    }
   }, [friends]);
 
   useEffect(() => {
-    getFriends();
+    if (friends != null) {
+      getFriends();
+    }
   }, [friends]);
 
   const handleOpen = (event) => {
@@ -187,7 +191,7 @@ export default function Navbar(props) {
       if (requestJSON.userid.length > 0) {
         const userInfo = await uinfo.getUserById(requestJSON.userid);
         reqObjects.push(userInfo);
-        console.log(userInfo);
+        // console.log(userInfo);
       }
     }
     setrequests(reqObjects);
@@ -219,24 +223,25 @@ export default function Navbar(props) {
     );
     const userId = window.sessionStorage.getItem("userId");
     const password = window.sessionStorage.getItem("password");
-    const addFriend = await friends.addFriend(
-      userId,
-      password,
-      user.userId,
-      true
-    );
-    getRequests();
+    const addFriend = await friends
+      .addFriend(userId, password, user.userId, true)
+      .then(() => {
+        getRequests();
+      });
     console.log("approve request success");
   };
 
   const removeFriend = async (event, user) => {
     console.log(user);
-    const reject = await friends.removeFriend(
-      window.sessionStorage.getItem("userId"),
-      window.sessionStorage.getItem("password"),
-      user.userId
-    );
-    getRequests();
+    const reject = await friends
+      .removeFriend(
+        window.sessionStorage.getItem("userId"),
+        window.sessionStorage.getItem("password"),
+        user.userId
+      )
+      .then(() => {
+        getRequests();
+      });
     console.log("reject request success");
   };
 

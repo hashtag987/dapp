@@ -1,0 +1,7 @@
+
+<CardMedia
+    component="img"
+    height="394"
+    image={test}
+    alt="Paella dish"
+/>

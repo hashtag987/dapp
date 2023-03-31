@@ -69,12 +69,12 @@ const Login = () => {
           // console.log("deoiiiiiii")
           const userInfo = await userinfo.getUser(data.username);
           console.log("user info ");
-          console.log(userInfo)
+          console.log(userInfo);
           //try {
-            // const encPW=await axios.post(URL.DOMAIN+URL.ENCRYPT_PASSWORD,{password:data.password,mpk:userInfo.masterPublicKey});
-            // console.log(encPW.data.encryptedPW);
-            const userDetails = await user.getUser(userData.data.userHash);
-            //console.log(trace)
+          // const encPW=await axios.post(URL.DOMAIN+URL.ENCRYPT_PASSWORD,{password:data.password,mpk:userInfo.masterPublicKey});
+          // console.log(encPW.data.encryptedPW);
+          const userDetails = await user.getUser(userData.data.userHash);
+          //console.log(trace)
           // } catch (error) {
           //   console.log(error)
           // }
@@ -88,7 +88,7 @@ const Login = () => {
           setmessage(STATUS_MESSAGE.LOGIN_SUCCESS);
           setseverity("success");
           setTimeout(() => {
-            navigate("/home");
+            navigate("/home/" + userInfo.username);
           }, 2000);
         } else {
           setmessagealert(true);
