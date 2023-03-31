@@ -10,9 +10,16 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import { Button } from "@mui/material";
-import { REUSABLE } from "../constants";
+import { REUSABLE, STATUS_MESSAGE } from "../constants";
 
-const ModalComponent = ({ open, handleClose, contents, usage, approveRequest, removeFriend }) => {
+const ModalComponent = ({
+  open,
+  handleClose,
+  contents,
+  usage,
+  approveRequest,
+  removeFriend,
+}) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -44,27 +51,50 @@ const ModalComponent = ({ open, handleClose, contents, usage, approveRequest, re
       >
         <Fade in={open}>
           <Box sx={style}>
-            <List>
-              {contents.length>0 && contents.map((content) => (
-                <div>
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Avatar>H</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={content.name} secondary={content.username} />
-                    <div id={"fgfh"}>
-                      {(usage==REUSABLE.NOTIFICATION)? <Button className="not-button" variant="contained" onClick={(e)=>approveRequest(e,content)}>
-                        Accept
-                      </Button>:<></>}
-                      <Button className="not-button" variant="contained" onClick={(e)=>removeFriend(e,content)}>
-                        {(usage==REUSABLE.NOTIFICATION)? "Reject":"Remove"}
-                      </Button>
-                    </div>
-                  </ListItem>
-                  <Divider variant="inset" component="li" />
-                </div>
-              ))}
-            </List>
+            {contents.length === 0 ? (
+              <div className="message-center">
+                {usage === REUSABLE.NOTIFICATION
+                  ? STATUS_MESSAGE.EMPTY_NOTIFICATIONS
+                  : STATUS_MESSAGE.EMPTY_FRIENDS}
+              </div>
+            ) : (
+              <List>
+                {contents.map((content) => (
+                  <div>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar>H</Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={content.name}
+                        secondary={content.username}
+                      />
+                      <div id={"fgfh"}>
+                        {usage == REUSABLE.NOTIFICATION ? (
+                          <Button
+                            className="not-button"
+                            variant="contained"
+                            onClick={(e) => approveRequest(e, content)}
+                          >
+                            Accept
+                          </Button>
+                        ) : (
+                          <></>
+                        )}
+                        <Button
+                          className="not-button"
+                          variant="contained"
+                          onClick={(e) => removeFriend(e, content)}
+                        >
+                          {usage == REUSABLE.NOTIFICATION ? "Reject" : "Remove"}
+                        </Button>
+                      </div>
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                  </div>
+                ))}
+              </List>
+            )}
           </Box>
         </Fade>
       </Modal>

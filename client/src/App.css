@@ -11,6 +11,15 @@
   flex-direction: column;
 }
 
+.message-center {
+  display: flex;
+  place-content: center;
+  height: 300px;
+  align-items: center;
+  flex-direction: column;
+  color: #888;
+}
+
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

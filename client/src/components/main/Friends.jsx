@@ -11,7 +11,7 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import { UserInfoService } from "../../services/UserInfoService";
 import { FriendService } from "../../services/FriendService";
 
-const Friends = () => {
+const Friends = ({ requests, myfriends }) => {
   const [requested, setrequested] = useState({});
   const [userInfo, setuserInfo] = useState(null);
   const [users, setusers] = useState([]);
@@ -22,13 +22,32 @@ const Friends = () => {
       setusers(allUsers);
     }
   };
+
+  const getRecommendations = async () => {
+    const friendsOrRequests = [];
+    // console.log(myfriends)
+    for (let user of requests) {
+      if (user.userId.length > 0) {
+        friendsOrRequests.push(user.userId);
+      }
+    }
+    for (let user of myfriends) {
+      if (user.userId.length > 0) {
+        friendsOrRequests.push(user.userId);
+      }
+    }
+    // console.log(friendsOrRequests)
+    const recUsers = await userInfo.getRecommendations(friendsOrRequests);
+    console.log(recUsers)
+    setusers(recUsers);
+  };
   useEffect(() => {
     setuserInfo(new UserInfoService());
     setfriends(new FriendService());
   }, []);
 
   useEffect(() => {
-    getAllUsers();
+    getRecommendations();
   });
 
   const handleClick = async (user, event) => {
@@ -36,9 +55,14 @@ const Friends = () => {
     setrequested({ ...requested, [event.currentTarget.id]: true });
     console.log(user);
     console.log(event.currentTarget.id);
-    const userId=window.sessionStorage.getItem("userId");
-    const password=window.sessionStorage.getItem("password");
-    const addFriend=await friends.addFriend(userId,password,user.userId,false);
+    const userId = window.sessionStorage.getItem("userId");
+    const password = window.sessionStorage.getItem("password");
+    const addFriend = await friends.addFriend(
+      userId,
+      password,
+      user.userId,
+      false
+    );
     // console.log(requested);
   };
   return (
@@ -54,15 +78,19 @@ const Friends = () => {
           overflow: "auto",
         }}
       >
-        {users.filter((user)=>user.username!=window.sessionStorage.getItem("username")).map((user, index) => (
-          <div>
-            <ListItem key={"fr" + index}>
-              <ListItemAvatar>
-                <Avatar>H</Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={user.name} secondary={user.username} />
-              <div id={"fr" + index} onClick={(e) => handleClick(user, e)}>
-                {/* <PersonAddAlt1Icon
+        {users
+          .filter(
+            (user) => user.username != window.sessionStorage.getItem("username")
+          )
+          .map((user, index) => (
+            <div>
+              <ListItem key={"fr" + index}>
+                <ListItemAvatar>
+                  <Avatar>H</Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={user.name} secondary={user.username} />
+                <div id={"fr" + index} onClick={(e) => handleClick(user, e)}>
+                  {/* <PersonAddAlt1Icon
                   style={{
                     cursor: "pointer",
                     float: "right",
@@ -70,30 +98,30 @@ const Friends = () => {
                     fontSize: "20px",
                   }}
                 /> */}
-                {requested["fr" + index] ? (
-                  <HowToRegIcon
-                    style={{
-                      cursor: "pointer",
-                      float: "right",
-                      marginBottom: "8px",
-                      fontSize: "20px",
-                    }}
-                  />
-                ) : (
-                  <PersonAddAlt1Icon
-                    style={{
-                      cursor: "pointer",
-                      float: "right",
-                      marginBottom: "8px",
-                      fontSize: "20px",
-                    }}
-                  />
-                )}
-              </div>
-            </ListItem>
-            <Divider variant="inset" component="li" />
-          </div>
-        ))}
+                  {requested["fr" + index] ? (
+                    <HowToRegIcon
+                      style={{
+                        cursor: "pointer",
+                        float: "right",
+                        marginBottom: "8px",
+                        fontSize: "20px",
+                      }}
+                    />
+                  ) : (
+                    <PersonAddAlt1Icon
+                      style={{
+                        cursor: "pointer",
+                        float: "right",
+                        marginBottom: "8px",
+                        fontSize: "20px",
+                      }}
+                    />
+                  )}
+                </div>
+              </ListItem>
+              <Divider variant="inset" component="li" />
+            </div>
+          ))}
       </List>
     </div>
   );

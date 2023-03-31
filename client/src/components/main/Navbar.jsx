@@ -24,10 +24,10 @@ import ModalComponent from "../../utils/ModalComponent";
 import { Link, useNavigate } from "react-router-dom";
 import { URL, STATUS_MESSAGE } from "../../constants";
 import { useState, useEffect } from "react";
-import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
+import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import { FriendService } from "../../services/FriendService";
 import { UserInfoService } from "../../services/UserInfoService";
-
+import Friends from "./Friends";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -127,8 +127,8 @@ export default function Navbar(props) {
   const [open, setOpen] = React.useState(false);
   const [friends, setfriends] = useState(null);
   const [uinfo, setuinfo] = useState(null);
-  const [usage, setusage] = useState("")
-  const [content, setcontent] = useState([])
+  const [usage, setusage] = useState("");
+  const [content, setcontent] = useState([]);
   const [requests, setrequests] = useState([]);
   const [myFriends, setmyFriends] = useState([]);
 
@@ -178,7 +178,9 @@ export default function Navbar(props) {
 
   const getRequests = async () => {
     let reqObjects = [];
-    const requests = await friends.getPendingRequests(window.sessionStorage.getItem("userId"));
+    const requests = await friends.getPendingRequests(
+      window.sessionStorage.getItem("userId")
+    );
     //console.log(requests);
     for (let request of requests) {
       const requestJSON = Object.assign({}, request);
@@ -193,7 +195,9 @@ export default function Navbar(props) {
 
   const getFriends = async () => {
     let friendList = [];
-    const requests = await friends.getFriends(window.sessionStorage.getItem("userId"));
+    const requests = await friends.getFriends(
+      window.sessionStorage.getItem("userId")
+    );
     console.log("req", requests);
     for (let friend of requests) {
       const friendJSON = Object.assign({}, friend);
@@ -208,13 +212,31 @@ export default function Navbar(props) {
 
   const approveRequest = async (event, user) => {
     console.log(user);
-    const approval = await friends.approveRequest(window.sessionStorage.getItem("userId"), window.sessionStorage.getItem("password"), user.userId);
+    const approval = await friends.approveRequest(
+      window.sessionStorage.getItem("userId"),
+      window.sessionStorage.getItem("password"),
+      user.userId
+    );
+    const userId = window.sessionStorage.getItem("userId");
+    const password = window.sessionStorage.getItem("password");
+    const addFriend = await friends.addFriend(
+      userId,
+      password,
+      user.userId,
+      true
+    );
+    getRequests();
     console.log("approve request success");
   };
 
   const removeFriend = async (event, user) => {
     console.log(user);
-    const reject = await friends.removeFriend(window.sessionStorage.getItem("userId"), window.sessionStorage.getItem("password"), user.userId);
+    const reject = await friends.removeFriend(
+      window.sessionStorage.getItem("userId"),
+      window.sessionStorage.getItem("password"),
+      user.userId
+    );
+    getRequests();
     console.log("reject request success");
   };
 
@@ -223,6 +245,7 @@ export default function Navbar(props) {
       setmessagealert(true);
       setmessage(STATUS_MESSAGE.LOGOUT_SUCCESS);
       setseverity("success");
+      window.sessionStorage.clear();
       navigate("/login");
     } catch (error) {
       setmessagealert(true);
@@ -335,7 +358,14 @@ export default function Navbar(props) {
                     />
                   </Badge>
                 </IconButton>
-                <ModalComponent open={open} handleClose={handleClose} usage={usage} contents={content} approveRequest={approveRequest} removeFriend={removeFriend} />
+                <ModalComponent
+                  open={open}
+                  handleClose={handleClose}
+                  usage={usage}
+                  contents={content}
+                  approveRequest={approveRequest}
+                  removeFriend={removeFriend}
+                />
                 <IconButton
                   size="large"
                   edge="end"
@@ -370,6 +400,7 @@ export default function Navbar(props) {
           </Fab>
         </ScrollTop>
       </Box>
+      <Friends requests={requests} myfriends={myFriends} />
     </div>
   );
 }

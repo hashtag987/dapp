@@ -50,17 +50,32 @@ export class UserInfoService extends React.Component {
   constructor() {
     super();
     this.createWeb3();
+  }
+
+  getRecommendations = async (friendsOrRequests) => {
+    try {
+      let users = [];
+      const response = await this.props.auth.methods
+        .getRecommendations(friendsOrRequests)
+        .call();
+      for (let user of response) {
+        users.push(Object.assign({}, user));
+      }
+      return users;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   getUser = async (username) => {
     try {
       //await this.props.web3.eth.personal.unlockAccount(account, password, 60);
-      console.log(username)
+      console.log(username);
       const user = await this.props.auth.methods.getUser(username).call();
-      console.log(user)
+      console.log(user);
       return Object.assign({}, user);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -70,7 +85,7 @@ export class UserInfoService extends React.Component {
       //console.log(user)
       return Object.assign({}, user);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 

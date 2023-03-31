@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      <Friends/>
+      {/* <Friends/> */}
       <Post />
     </div>
   );
