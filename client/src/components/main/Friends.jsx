@@ -7,25 +7,28 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
-// import { posts } from "./post";
 import { UserInfoService } from "../../services/UserInfoService";
 import { FriendService } from "../../services/FriendService";
 
-const Friends = ({ requests, myfriends }) => {
+const Friends = ({ getRequests, getFriends }) => {
   const [requested, setrequested] = useState({});
   const [userInfo, setuserInfo] = useState(null);
   const [users, setusers] = useState([]);
   const [friends, setfriends] = useState(null);
-  const getAllUsers = async () => {
-    if (userInfo != null) {
-      const allUsers = await userInfo.getAllusers();
-      setusers(allUsers);
-    }
-  };
+  // const getAllUsers = async () => {
+  //   if (userInfo != null) {
+  //     const allUsers = await userInfo.getAllusers();
+  //     setusers(allUsers);
+  //   }
+  // };
 
   const getRecommendations = async () => {
     const friendsOrRequests = [];
-    // console.log(myfriends)
+    const requests = await getRequests();
+    const myfriends = await getFriends();
+    const userId = window.sessionStorage.getItem("userId");
+    const requestedFriends = await friends.getRequested(userId);
+    console.log(requestedFriends);
     for (let user of requests) {
       if (user.userId.length > 0) {
         friendsOrRequests.push(user.userId);
@@ -36,9 +39,13 @@ const Friends = ({ requests, myfriends }) => {
         friendsOrRequests.push(user.userId);
       }
     }
-    // console.log(friendsOrRequests)
+    for (let user of requestedFriends) {
+      if (user.length > 0) {
+        friendsOrRequests.push(user);
+      }
+    }
     const recUsers = await userInfo.getRecommendations(friendsOrRequests);
-    console.log(recUsers)
+    console.log(recUsers);
     setusers(recUsers);
   };
   useEffect(() => {
@@ -47,25 +54,24 @@ const Friends = ({ requests, myfriends }) => {
   }, []);
 
   useEffect(() => {
-    if(friends!=null){
+    if (friends != null) {
       getRecommendations();
     }
-  },[friends]);
+  }, [friends, requested]);
 
   const handleClick = async (user, event) => {
     // event.preventDefault();
     setrequested({ ...requested, [event.currentTarget.id]: true });
-    console.log(user);
-    console.log(event.currentTarget.id);
     const userId = window.sessionStorage.getItem("userId");
     const password = window.sessionStorage.getItem("password");
-    const addFriend = await friends.addFriend(
+    await friends.addFriend(
       userId,
       password,
       user.userId,
       false
     );
-    // console.log(requested);
+    const request = await friends.addToRequested(userId, password, user.userId);
+    console.log(request);
   };
   return (
     <div className="cards">
@@ -82,7 +88,9 @@ const Friends = ({ requests, myfriends }) => {
       >
         {users
           .filter(
-            (user) => user.username != window.sessionStorage.getItem("username")
+            (user) =>
+              user.username !== window.sessionStorage.getItem("username") &&
+              user.username.length > 0
           )
           .map((user, index) => (
             <div>

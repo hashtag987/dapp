@@ -1,22 +1,15 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import TextareaAutosize from "@mui/base/TextareaAutosize";
 import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ShareIcon from "@mui/icons-material/Share";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import test from "../../assets/images/paella.jpg";
 import { Button } from "@mui/material";
 import { useState, useEffect } from "react";
 import { PostService } from "../../services/PostService";
@@ -25,6 +18,7 @@ import { UserInfoService } from "../../services/UserInfoService";
 import { STATUS_MESSAGE, URL } from "../../constants";
 import axios from "axios";
 import { UserService } from "../../services/UserService";
+import Alertbox from "../../utils/AlertBox";
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -43,6 +37,9 @@ export default function Post() {
   const [friendsvc, setfriendsvc] = useState(null);
   const [postsvc, setpostsvc] = useState(null);
   const [usersvc, setusersvc] = useState(null);
+  const [messagealert, setmessagealert] = useState(false);
+  const [message, setmessage] = useState("");
+  const [severity, setseverity] = useState("success");
 
   useEffect(() => {
     setuinfo(new UserInfoService());
@@ -50,6 +47,10 @@ export default function Post() {
     setfriendsvc(new FriendService());
     setusersvc(new UserService());
   }, []);
+
+  const handleAlertClose = () => {
+    setmessagealert(false);
+  };
 
   useEffect(() => {
     async function sample() {
@@ -78,29 +79,28 @@ export default function Post() {
     try {
       const userId = window.sessionStorage.getItem("userId");
       const posts = await postsvc.getPosts(userId);
-      console.log(posts);
       let postsWithUser = [];
       for (let post of posts) {
-        let msk = "";
+        // let msk = "";
         const userInfo = await uinfo.getUserById(post.userId);
-        if (userId === post.userId) {
-          msk = window.sessionStorage.getItem("token");
-        } else {
-          const userName = await axios.post(URL.DOMAIN + URL.USER_EXISTS, {
-            username: userInfo.username,
-          });
-          console.log(userInfo.username);
-          const userDetails = await usersvc.getUser(userName.data.userHash);
-          console.log(userDetails);
-          msk = userDetails.trace;
-        }
-        const res = await axios.post(URL.DOMAIN + URL.DECRYPT_POST, {
-          post: post.post,
-          msk: msk,
-        });
+        // if (userId === post.userId) {
+        //   msk = window.sessionStorage.getItem("token");
+        // } else {
+        //   const userName = await axios.post(URL.DOMAIN + URL.USER_EXISTS, {
+        //     username: userInfo.username,
+        //   });
+        //   console.log(userInfo.username);
+        //   const userDetails = await usersvc.getUser(userName.data.userHash);
+        //   console.log(userDetails);
+        //   msk = userDetails.trace;
+        // }
+        // const res = await axios.post(URL.DOMAIN + URL.DECRYPT_POST, {
+        //   post: post.post,
+        //   msk: msk,
+        // });
 
         let tempPost = post;
-        tempPost.post = res.data.decPost;
+        // tempPost.post = res.data.decPost;
         tempPost.username = userInfo.username;
         postsWithUser.push(tempPost);
       }
@@ -119,6 +119,12 @@ export default function Post() {
 
   const createPost = async () => {
     try {
+      if (newpost.length === 0) {
+        setmessagealert(true);
+        setmessage(STATUS_MESSAGE.EMPTY_POST_CONTENT);
+        setseverity("error");
+        return;
+      }
       const userId = window.sessionStorage.getItem("userId");
       const password = window.sessionStorage.getItem("password");
       const myFriends = await friendsvc.getFriends(userId);
@@ -127,36 +133,35 @@ export default function Post() {
       var today = new Date();
       let dateString = today.toDateString().split(" ");
       let now = dateString[1] + " " + dateString[2] + "," + dateString[3];
-      const res = await axios.post(URL.DOMAIN + URL.ENCRYPT_POST, {
-        post: newpost,
-        mpk: window.sessionStorage.getItem("mpk"),
-      });
-      console.log(res);
+      // const res = await axios.post(URL.DOMAIN + URL.ENCRYPT_POST, {
+      //   post: newpost,
+      //   mpk: window.sessionStorage.getItem("mpk"),
+      // });
+      // console.log(res);
       const postResponse = await postsvc
-        .createPost(userId, password, res.data.encPost, now)
+        .createPost(userId, password, newpost, now)
         .then(() => {
           getPosts();
         });
 
       for (let friend of myFriends) {
-        const userInfo = await uinfo.getUserById(friend.userid);
-        const res = await axios.post(URL.DOMAIN + URL.ENCRYPT_POST, {
-          post: newpost,
-          mpk: userInfo.masterPublicKey,
-        });
-        console.log("*************mpk************");
-        console.log(res);
-        console.log(userInfo.masterPublicKey);
+        // const userInfo = await uinfo.getUserById(friend.userid);
+        // const res = await axios.post(URL.DOMAIN + URL.ENCRYPT_POST, {
+        //   post: newpost,
+        //   mpk: userInfo.masterPublicKey,
+        // });
+        // console.log("*************mpk************");
+        // console.log(res);
+        // console.log(userInfo.masterPublicKey);
         await postsvc.mapPostToFriend(
           userId,
           password,
-          res.data.encPost,
+          newpost,
           now,
           friend.userid
         );
       }
       setnewpost("");
-      console.log(postResponse);
     } catch (error) {
       console.log(error);
     }
@@ -171,6 +176,12 @@ export default function Post() {
         left: 400,
       }}
     >
+      <Alertbox
+        openalert={messagealert}
+        handleAlertClose={handleAlertClose}
+        message={message}
+        severity={severity}
+      ></Alertbox>
       <Card sx={{ maxWidth: 600, marginBottom: 2 }}>
         <CardHeader
           avatar={
@@ -204,6 +215,21 @@ export default function Post() {
             }}
           >
             Post
+          </Button>
+          <Button
+            variant="outlined"
+            component="label"
+            size="medium"
+            style={{
+              marginTop: "-10px",
+              marginLeft: "8px",
+              textTransform: "none",
+              width: 130,
+              backgroundColor: "",
+            }}
+          >
+            Upload image
+            <input type="file" hidden />
           </Button>
         </CardActions>
       </Card>

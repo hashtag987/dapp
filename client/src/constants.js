@@ -1,5 +1,5 @@
 export const WEB3PROVIDER = "http://127.0.0.1:8702";
-export const ETH_PROVIDER = "0x91BfC309Bb6e44D605A56eC88d4373B268FeBc12";
+export const ETH_PROVIDER = "0x4136AC02C02265743d839125Aa6625245f662595";
 export const LOGO_TEXT = "SOCIALIZE";
 //api URLS
 export const URL = {
@@ -10,14 +10,15 @@ export const URL = {
   ENCRYPT_PASSWORD: "/api/auth/encryptPassword",
   ENCRYPT_POST: "/api/ops/encryptPost",
   DECRYPT_POST: "/api/ops/decryptPost",
+  TOKEN_BUFFER: "/api/auth/tokenbuffer",
 };
 
 //deployed contract addresses
 export const CONTRACT = {
-  USER_CREATION_CONTRACT: "0xeEc2B64a38D664a4D1eDcE47ddD9d231C82EcDFa",
-  USER_MANAGEMENT_CONTRACT: "0x4C8513b9aab5fd2AD0FCC4EB4De72d18EC5be84E",
-  FRIEND_REQUEST: "0xadFb6F70d0824dc0437112e004791501f8316A3F",
-  POST_CONTRACT: "0x17bE73DFE83156e4dCeb75d9088C7A05D131a380",
+  USER_CREATION_CONTRACT: "0x70661592639bC91D5c9C25f8BC9E45b714C6b982",
+  USER_MANAGEMENT_CONTRACT: "0xc13924DA396fe6eC78A80a676d4413A02c90062A",
+  FRIEND_REQUEST: "0xA1588715616Ec7135A30D87eD3e287d4eea795eF",
+  POST_CONTRACT: "0xB994b590553D74585825505Dbd35C151a60e28d6",
 };
 
 export const STATUS_MESSAGE = {
@@ -31,6 +32,7 @@ export const STATUS_MESSAGE = {
   EMPTY_NOTIFICATIONS: "Currently there no notifications for you🙂",
   EMPTY_FRIENDS: "Looks like you're alone😔",
   EMPTY_POSTS: "Enna onnum kaanom🤨?",
+  EMPTY_POST_CONTENT: "Post content cannot be empty",
 };
 
 export const REUSABLE = {

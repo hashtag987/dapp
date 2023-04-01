@@ -131,7 +131,7 @@ export default function Navbar(props) {
   const [content, setcontent] = useState([]);
   const [requests, setrequests] = useState([]);
   const [myFriends, setmyFriends] = useState([]);
-
+  const requested = [];
   useEffect(() => {
     setfriends(new FriendService());
     setuinfo(new UserInfoService());
@@ -149,11 +149,13 @@ export default function Navbar(props) {
     }
   }, [friends]);
 
-  const handleOpen = (event) => {
+  const handleOpen = async (event) => {
     if (event.currentTarget.id == "notifications") {
+      const myRequests = await getRequests();
       setusage(REUSABLE.NOTIFICATION);
-      setcontent(requests);
+      setcontent(myRequests);
     } else {
+      const myFriends = await getFriends();
       setusage(REUSABLE.FRIENDS);
       setcontent(myFriends);
     }
@@ -195,6 +197,7 @@ export default function Navbar(props) {
       }
     }
     setrequests(reqObjects);
+    return reqObjects;
   };
 
   const getFriends = async () => {
@@ -212,6 +215,7 @@ export default function Navbar(props) {
       }
     }
     setmyFriends(friendList);
+    return friendList;
   };
 
   const approveRequest = async (event, user) => {
@@ -221,24 +225,35 @@ export default function Navbar(props) {
       window.sessionStorage.getItem("password"),
       user.userId
     );
+    if (approval === 200) {
+      const myRequests = await getRequests();
+      console.log("Inside promise");
+      setrequests(myRequests);
+    }
     const userId = window.sessionStorage.getItem("userId");
     const password = window.sessionStorage.getItem("password");
-    const addFriend = await friends
-      .addFriend(userId, password, user.userId, true)
-      .then(() => {
-        getRequests();
-      });
+    await friends.deleteFromRequested(userId, password, user.userId);
+    const addFriend = await friends.addFriend(
+      userId,
+      password,
+      user.userId,
+      true
+    );
+    console.log(addFriend);
     console.log("approve request success");
   };
 
   const removeFriend = async (event, user) => {
     console.log(user);
+    console.log(event.currentTarget.textContent);
+    const userId = window.sessionStorage.getItem("userId");
+    const password = window.sessionStorage.getItem("password");
+    if (event.currentTarget.textContent === "Reject") {
+      console.log("deleted");
+      await friends.deleteFromRequested(userId, password, user.userId);
+    }
     const reject = await friends
-      .removeFriend(
-        window.sessionStorage.getItem("userId"),
-        window.sessionStorage.getItem("password"),
-        user.userId
-      )
+      .removeFriend(userId, password, user.userId)
       .then(() => {
         getRequests();
       });
@@ -405,7 +420,7 @@ export default function Navbar(props) {
           </Fab>
         </ScrollTop>
       </Box>
-      <Friends requests={requests} myfriends={myFriends} />
+      <Friends getRequests={getRequests} getFriends={getFriends} />
     </div>
   );
 }

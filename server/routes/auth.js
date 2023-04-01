@@ -78,12 +78,24 @@ router.post("/userexists", async (req, res) => {
   }
 });
 
-router.post("/encryptPassword", async(req,res) => {
+router.post("/encryptPassword", async (req, res) => {
   try {
-    const { password,mpk } = req.body;    
+    const { password, mpk } = req.body;
     res.status(200).send({
       message: "Decryption is performed successfully",
-      encryptedPW: RSAEncrypt(password,mpk).toString("base64"),
+      encryptedPW: RSAEncrypt(password, mpk).toString("base64"),
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
+router.post("/tokenbuffer", async (req, res) => {
+  try {
+    const { id, key } = req.body;
+    res.status(200).send({
+      data: Buffer.from(id + ":" + key).toString("base64"),
     });
   } catch (error) {
     console.log(error);
