@@ -7,24 +7,14 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
-import { UserInfoService } from "../../services/UserInfoService";
-import { FriendService } from "../../services/FriendService";
+import { UserInfoService } from "../../../services/UserInfoService";
+import { FriendService } from "../../../services/FriendService";
 
-const Friends = ({ getRequests, getFriends }) => {
+const FriendRecommendations = ({ getRequests, getFriends }) => {
   const [requested, setrequested] = useState({});
   const [userInfo, setuserInfo] = useState(null);
   const [users, setusers] = useState([]);
   const [friends, setfriends] = useState(null);
-  // const getAllUsers = async () => {
-  //   try {
-  //     if (userInfo != null) {
-  //       const allUsers = await userInfo.getAllusers();
-  //       setusers(allUsers);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const getRecommendations = async () => {
     try {
@@ -131,4 +121,4 @@ const Friends = ({ getRequests, getFriends }) => {
     </div>
   );
 };
-export default Friends;
+export default FriendRecommendations;

@@ -26,10 +26,14 @@ const ModalComponent = ({
     padding: 10,
     right: usage === REUSABLE.NOTIFICATION ? "70px" : "110px",
     width: 300,
+    height: 300,
+    maxHeight: 300,
+    overflowY: "auto",
+    overflowX: "hidden",
     borderRadius: 1,
     bgcolor: "background.paper",
-    boxShadow: 10,
-    p: 4,
+    boxShadow: 5,
+    p: 1,
   };
   return (
     <div>
@@ -47,6 +51,15 @@ const ModalComponent = ({
       >
         <Fade in={open}>
           <Box sx={style}>
+            <div className="box-header">
+              {usage === REUSABLE.NOTIFICATION ? "Notifications" : "Friends"}
+              <Divider
+                sx={{
+                  width: 280,
+                  pt: 1,
+                }}
+              />
+            </div>
             {contents.length === 0 ? (
               <div className="message-center">
                 {usage === REUSABLE.NOTIFICATION
@@ -59,13 +72,21 @@ const ModalComponent = ({
                   <div>
                     <ListItem>
                       <ListItemAvatar>
-                        <Avatar>H</Avatar>
+                        <Avatar
+                          sx={{
+                            fontSize: 19,
+                            height: 35,
+                            width: 35,
+                          }}
+                        >
+                          {content.username.charAt(0).toUpperCase()}
+                        </Avatar>
                       </ListItemAvatar>
                       <ListItemText
                         primary={content.name}
                         secondary={content.username}
-                        primaryTypographyProps={{ sx: { fontSize: 13 } }}
-                        secondaryTypographyProps={{ sx: { fontSize: 13 } }}
+                        primaryTypographyProps={{ sx: { fontSize: 12 } }}
+                        secondaryTypographyProps={{ sx: { fontSize: 12 } }}
                       />
                       <div id={"fgfh"}>
                         {usage === REUSABLE.NOTIFICATION ? (
@@ -90,7 +111,11 @@ const ModalComponent = ({
                         </Button>
                       </div>
                     </ListItem>
-                    <Divider variant="inset" component="li" />
+                    {contents.length > 1 ? (
+                      <Divider variant="inset" component="li" />
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 ))}
               </List>

@@ -33,6 +33,7 @@ export const STATUS_MESSAGE = {
   EMPTY_FRIENDS: "Looks like you're alone. Add some friends",
   EMPTY_POSTS: "No posts Found❕",
   EMPTY_POST_CONTENT: "Post content cannot be empty",
+  EMPTY_USERS: "No users found",
 };
 
 export const REUSABLE = {

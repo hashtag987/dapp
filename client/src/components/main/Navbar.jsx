@@ -27,8 +27,9 @@ import { useState, useEffect } from "react";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import { FriendService } from "../../services/FriendService";
 import { UserInfoService } from "../../services/UserInfoService";
-import Friends from "./Friends";
+import FriendRecommendations from "./friends/FriendRecommendations";
 import { Tooltip } from "@mui/material";
+import SearchFriends from "./friends/SearchFriends";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -131,7 +132,9 @@ export default function Navbar(props) {
   const [usage, setusage] = useState("");
   const [content, setcontent] = useState([]);
   const [requests, setrequests] = useState([]);
+  const [searchContent, setsearchContent] = useState("");
   const [myFriends, setmyFriends] = useState([]);
+  const [users, setusers] = useState([]);
   useEffect(() => {
     setfriends(new FriendService());
     setuinfo(new UserInfoService());
@@ -148,6 +151,10 @@ export default function Navbar(props) {
       getFriends();
     }
   }, [friends]);
+
+  const handleChange = ({ currentTarget: input }) => {
+    setsearchContent(input.value);
+  };
 
   const handleOpen = async (event) => {
     try {
@@ -348,9 +355,11 @@ export default function Navbar(props) {
                   <SearchIcon style={{ fontSize: 20, color: "#4a79f1" }} />
                 </SearchIconWrapper>
                 <StyledInputBase
+                  onChange={handleChange}
                   placeholder="Find Friends..."
                   inputProps={{ "aria-label": "search" }}
                 />
+                <SearchFriends searchContent={searchContent} />
               </Search>
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
@@ -422,7 +431,10 @@ export default function Navbar(props) {
           </Fab>
         </ScrollTop>
       </Box>
-      <Friends getRequests={getRequests} getFriends={getFriends} />
+      <FriendRecommendations
+        getRequests={getRequests}
+        getFriends={getFriends}
+      />
     </div>
   );
 }
