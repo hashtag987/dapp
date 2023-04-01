@@ -27,7 +27,6 @@ router.post("/sendRequest", async (req, res) => {
 router.post("/encryptPost", async (req, res) => {
   try {
     const { post, mpk } = req.body;
-    console.log(req.body);
     const encPost = RSAEncrypt(post, mpk).toString("base64");
     res.status(200).send({
       encPost: encPost,
@@ -41,7 +40,6 @@ router.post("/encryptPost", async (req, res) => {
 router.post("/decryptPost", async (req, res) => {
   try {
     const { post, msk } = req.body;
-    console.log(req.body);
     const decPost = RSADecrypt(Buffer.from(post, "base64"), msk).toString();
     res.status(200).send({
       decPost: decPost,

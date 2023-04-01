@@ -60,14 +60,11 @@ const Register = () => {
   const handleSubmit = async (e) => {
     try {
       const res = await axios.post(URL.DOMAIN + URL.CREATE_USER, data);
-      console.log(res);
       if (res.status === 200) {
         const userData = await axios.post(URL.DOMAIN + URL.USER_EXISTS, {
           username: data.username,
         });
-        console.log(userData);
         const userExists = await user.userExists(userData.data.userHash);
-        console.log(userExists);
         if (userExists.status === "200") {
           setmessage(STATUS_MESSAGE.USER_ALREADY_EXISTS);
           setseverity("error");
@@ -79,12 +76,9 @@ const Register = () => {
           return;
         }
         const encData = res.data.data;
-        console.log("enc data");
-        console.log(encData);
         await user.create_user(encData.passwordEnc).then((value) => {
           account = value;
         });
-        console.log("register account ",account);
         data.token = "sampletoken";
         await user.adduser(
           encData.nameEnc,
@@ -94,7 +88,6 @@ const Register = () => {
           encData.temp,
           account
         );
-        console.log("reg")
         await user.sign(
           encData.userHash,
           encData.masterPublicKey,
@@ -102,7 +95,6 @@ const Register = () => {
           account,
           encData.passwordEnc
         );
-        console.log("sign");
         await userInfo.addUserInfo(
           data.name,
           data.username,
@@ -110,29 +102,23 @@ const Register = () => {
           encData.masterPublicKey,
           account
         );
-        await friends.addUserId(
-          account,
-          encData.passwordEnc
-        );
-        // console.log();
+        await friends.addUserId(account, encData.passwordEnc);
         window.sessionStorage.setItem("name", data.name);
         window.sessionStorage.setItem("username", data.username);
-        window.sessionStorage.setItem("userHash",encData.nameEnc);
+        window.sessionStorage.setItem("userHash", encData.nameEnc);
         window.sessionStorage.setItem("token", encData.temp);
-        window.sessionStorage.setItem("mpk",encData.masterPublicKey);
-        window.sessionStorage.setItem("userId",account);
-        window.sessionStorage.setItem("password",encData.passwordEnc);
-        const users = await userInfo.getAllusers();
-        console.log(users);
+        window.sessionStorage.setItem("mpk", encData.masterPublicKey);
+        window.sessionStorage.setItem("userId", account);
+        window.sessionStorage.setItem("password", encData.password);
         setmessagealert(true);
         setmessage(STATUS_MESSAGE.REGISTER_SUCCESS);
         setseverity("success");
         setTimeout(() => {
-          navigate("/home/" +  data.username);
+          navigate("/home/" + data.username);
         }, 2000);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       if (error.response) {
         let pass_err = [];
         for (let err of error.response.data.data) {

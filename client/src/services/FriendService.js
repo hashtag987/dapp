@@ -1,6 +1,6 @@
 import React from "react";
 import Web3 from "web3";
-import { CONTRACT, ETH_PROVIDER, WEB3PROVIDER } from "../constants";
+import { CONTRACT, WEB3PROVIDER } from "../constants";
 import { FriendRequestABI } from "./abis/FriendRequestABI";
 import { ContainerService } from "./ContainerService";
 export class FriendService extends React.Component {
@@ -31,9 +31,7 @@ export class FriendService extends React.Component {
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     await this.props.auth.methods.addUserId(account).send({
       from: account,
       gasPrice: gasEstimate,
@@ -52,9 +50,7 @@ export class FriendService extends React.Component {
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     const methods = await this.props.auth.methods
       .addFriend(account, friendId, isApproved)
       .send({
@@ -63,7 +59,6 @@ export class FriendService extends React.Component {
         maxFeePerGas: next_gas_price,
         gas: 6721975,
       });
-    console.log(methods);
     return methods;
   };
 
@@ -78,15 +73,12 @@ export class FriendService extends React.Component {
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
     const next_gas_price = await this.getMaxfeePerGas();
-    const methods = await this.props.auth.methods
-      .addToRequested(account, friendId)
-      .send({
-        from: account,
-        gasPrice: gasEstimate,
-        maxFeePerGas: next_gas_price,
-        gas: 6721975,
-      });
-    console.log(methods);
+    await this.props.auth.methods.addToRequested(account, friendId).send({
+      from: account,
+      gasPrice: gasEstimate,
+      maxFeePerGas: next_gas_price,
+      gas: 6721975,
+    });
   };
 
   deleteFromRequested = async (account, password, friendId) => {
@@ -100,15 +92,12 @@ export class FriendService extends React.Component {
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
     const next_gas_price = await this.getMaxfeePerGas();
-    const methods = await this.props.auth.methods
-      .deleteFromRequested(friendId, account)
-      .send({
-        from: account,
-        gasPrice: gasEstimate,
-        maxFeePerGas: next_gas_price,
-        gas: 6721975,
-      });
-    console.log(methods);
+    await this.props.auth.methods.deleteFromRequested(friendId, account).send({
+      from: account,
+      gasPrice: gasEstimate,
+      maxFeePerGas: next_gas_price,
+      gas: 6721975,
+    });
   };
 
   removeFriend = async (account, password, friendId) => {
@@ -121,9 +110,7 @@ export class FriendService extends React.Component {
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     let next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     await this.props.auth.methods.removeFriend(account, friendId).send({
       from: account,
       gasPrice: gasEstimate,
@@ -140,44 +127,30 @@ export class FriendService extends React.Component {
   };
 
   getFriends = async (userId) => {
-    try {
-      const response = await this.props.auth.methods.getFriends(userId).call();
-      let friends = [];
-      for (let user of response) {
-        if (user.userid.length > 0) {
-          friends.push(Object.assign({}, user));
-        }
+    const response = await this.props.auth.methods.getFriends(userId).call();
+    let friends = [];
+    for (let user of response) {
+      if (user.userid.length > 0) {
+        friends.push(Object.assign({}, user));
       }
-      return friends;
-    } catch (error) {
-      console.log(error);
     }
+    return friends;
   };
 
   getRequested = async (userId) => {
-    try {
-      const response = await this.props.auth.methods
-        .getRequested(userId)
-        .call();
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
+    const response = await this.props.auth.methods.getRequested(userId).call();
+    return response;
   };
 
   getPendingRequests = async (userId) => {
-    try {
-      const response = await this.props.auth.methods
-        .getPendingRequests(userId)
-        .call();
-      let friends = [];
-      for (let user of response) {
-        friends.push(Object.assign({}, user));
-      }
-      return friends;
-    } catch (error) {
-      console.log(error);
+    const response = await this.props.auth.methods
+      .getPendingRequests(userId)
+      .call();
+    let friends = [];
+    for (let user of response) {
+      friends.push(Object.assign({}, user));
     }
+    return friends;
   };
 
   approveRequest = async (account, password, friendId) => {
@@ -190,9 +163,7 @@ export class FriendService extends React.Component {
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     await this.props.auth.methods.approveRequest(account, friendId).send({
       from: account,
       gasPrice: gasEstimate,

@@ -2,7 +2,6 @@ import './App.css';
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Register from './components/Auth/Register';
 import Login from './components/Auth/Login';
-import Navbar from './components/main/Navbar';
 import Post from './components/main/Post';
 import Home from './components/main/Home';
 import IPFSTest from './components/main/IPFSTest';

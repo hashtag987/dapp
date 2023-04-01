@@ -47,9 +47,7 @@ const Login = () => {
         const userData = await axios.post(URL.DOMAIN + URL.USER_EXISTS, {
           username: data.username,
         });
-        console.log(userData);
         const userExists = await user.userExists(userData.data.userHash);
-        console.log(userExists);
         if (userExists.status !== "200") {
           setmessage(STATUS_MESSAGE.USER_DOESNT_EXISTS);
           setseverity("error");
@@ -57,27 +55,15 @@ const Login = () => {
           return;
         }
         const signature = await user.getSignature(userData.data.userHash);
-        console.log(signature);
         const res = await axios.post(URL.DOMAIN + URL.VERIFY_USER, {
           username: userData.data.userHash,
           mpk: signature.masterPublicKey,
           signature: signature.signature,
           password: data.password,
         });
-        console.log(res);
         if (res.status === 200 && res.data.verified) {
-          // console.log("deoiiiiiii")
           const userInfo = await userinfo.getUser(data.username);
-          console.log("user info ");
-          console.log(userInfo);
-          //try {
-          // const encPW=await axios.post(URL.DOMAIN+URL.ENCRYPT_PASSWORD,{password:data.password,mpk:userInfo.masterPublicKey});
-          // console.log(encPW.data.encryptedPW);
           const userDetails = await user.getUser(userData.data.userHash);
-          //console.log(trace)
-          // } catch (error) {
-          //   console.log(error)
-          // }
           window.sessionStorage.setItem("name", userInfo.name);
           window.sessionStorage.setItem("username", userInfo.username);
           window.sessionStorage.setItem("mpk", userInfo.masterPublicKey);

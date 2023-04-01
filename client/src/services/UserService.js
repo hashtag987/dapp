@@ -17,16 +17,8 @@ export class UserService extends React.Component {
   }
 
   getUser = async (username) => {
-    // try {
-      //console.log(account);
-    //await this.props.web3.eth.personal.unlockAccount(account, password, 60);
-    
     const user = await this.props.auth.methods.getUser(username).call();
-    console.log(user)
     return Object.assign({}, user);
-    // } catch (error) {
-    //   console.log(error)
-    // }
   };
 
   getMaxfeePerGas = async () => {
@@ -58,7 +50,6 @@ export class UserService extends React.Component {
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     await this.props.auth.methods
       .addToSignature(userHash, masterPublicKey, signature)
       .send({
@@ -69,9 +60,15 @@ export class UserService extends React.Component {
       });
   };
 
-  adduser = async (userName, password, masterPublicKey, token, trace, account) => {
-    // try {
-      await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+  adduser = async (
+    userName,
+    password,
+    masterPublicKey,
+    token,
+    trace,
+    account
+  ) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
       .createUser(userName, password, masterPublicKey, token, trace)
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
@@ -80,9 +77,7 @@ export class UserService extends React.Component {
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     await this.props.auth.methods
       .createUser(userName, password, masterPublicKey, token, trace)
       .send({
@@ -91,11 +86,6 @@ export class UserService extends React.Component {
         maxFeePerGas: next_gas_price,
         gas: 6721975,
       });
-    // const eve = await this.props.auth.events.UserCreated();
-    // console.log(eve);
-    // } catch (error) {
-    //   console.log(error)
-    // }
   };
 
   deluser = async (id, name) => {
@@ -124,7 +114,6 @@ export class UserService extends React.Component {
         this.props.web3.utils.toWei("10", "ether")
       ),
     });
-    console.log("User created with id " + account);
     return account;
   };
 

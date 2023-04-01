@@ -36,9 +36,6 @@ router.post("/createuser", async (req, res) => {
       userHash: userHash,
       temp: msk,
     };
-    console.log(data.signature);
-    console.log(" ");
-    console.log(data.userHash);
     res
       .status(200)
       .send({ message: "Encryption is performed successfully", data: data });
@@ -51,7 +48,6 @@ router.post("/createuser", async (req, res) => {
 router.post("/verifyuser", async (req, res) => {
   try {
     const { username, password, mpk, signature } = req.body;
-    console.log(req.body);
     const verified = verifyUser(username, password, mpk, signature);
     res.status(200).send({
       message: "Decryption is performed successfully",
@@ -66,7 +62,6 @@ router.post("/verifyuser", async (req, res) => {
 router.post("/userexists", async (req, res) => {
   try {
     const { username } = req.body;
-    console.log(username);
     const userHash = generateUserHash(username);
     res.status(200).send({
       message: "Decryption is performed successfully",

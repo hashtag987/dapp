@@ -46,11 +46,9 @@ const createAccountInBlockChain = (username, password) => {
 
 const signUser = (username, password, privateKey) => {
   const signer = crypto.createSign("RSA-SHA256");
-  console.log(signer);
   signer.update(username);
   signer.update(password);
   sign = signer.sign(privateKey, "hex");
-  console.log(sign);
   return sign;
 };
 

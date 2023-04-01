@@ -21,13 +21,14 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Fade from "@mui/material/Fade";
 import { LOGO_TEXT, REUSABLE } from "../../constants";
 import ModalComponent from "../../utils/ModalComponent";
-import { Link, useNavigate } from "react-router-dom";
-import { URL, STATUS_MESSAGE } from "../../constants";
+import { useNavigate } from "react-router-dom";
+import { STATUS_MESSAGE } from "../../constants";
 import { useState, useEffect } from "react";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import { FriendService } from "../../services/FriendService";
 import { UserInfoService } from "../../services/UserInfoService";
 import Friends from "./Friends";
+import { Tooltip } from "@mui/material";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
   borderRadius: theme.shape.borderRadius,
@@ -131,7 +132,6 @@ export default function Navbar(props) {
   const [content, setcontent] = useState([]);
   const [requests, setrequests] = useState([]);
   const [myFriends, setmyFriends] = useState([]);
-  const requested = [];
   useEffect(() => {
     setfriends(new FriendService());
     setuinfo(new UserInfoService());
@@ -150,20 +150,23 @@ export default function Navbar(props) {
   }, [friends]);
 
   const handleOpen = async (event) => {
-    if (event.currentTarget.id == "notifications") {
-      const myRequests = await getRequests();
-      setusage(REUSABLE.NOTIFICATION);
-      setcontent(myRequests);
-    } else {
-      const myFriends = await getFriends();
-      setusage(REUSABLE.FRIENDS);
-      setcontent(myFriends);
+    try {
+      if (event.currentTarget.id == "notifications") {
+        const myRequests = await getRequests();
+        setusage(REUSABLE.NOTIFICATION);
+        setcontent(myRequests);
+      } else {
+        const myFriends = await getFriends();
+        setusage(REUSABLE.FRIENDS);
+        setcontent(myFriends);
+      }
+      setOpen(true);
+    } catch (error) {
+      console.log(error);
     }
-    setOpen(true);
   };
   const handleClose = () => setOpen(false);
   const isMenuOpen = Boolean(anchorEl);
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -183,81 +186,78 @@ export default function Navbar(props) {
   };
 
   const getRequests = async () => {
-    let reqObjects = [];
-    const requests = await friends.getPendingRequests(
-      window.sessionStorage.getItem("userId")
-    );
-    //console.log(requests);
-    for (let request of requests) {
-      const requestJSON = Object.assign({}, request);
-      if (requestJSON.userid.length > 0) {
-        const userInfo = await uinfo.getUserById(requestJSON.userid);
-        reqObjects.push(userInfo);
-        // console.log(userInfo);
+    try {
+      let reqObjects = [];
+      const requests = await friends.getPendingRequests(
+        window.sessionStorage.getItem("userId")
+      );
+      for (let request of requests) {
+        const requestJSON = Object.assign({}, request);
+        if (requestJSON.userid.length > 0) {
+          const userInfo = await uinfo.getUserById(requestJSON.userid);
+          reqObjects.push(userInfo);
+        }
       }
+      setrequests(reqObjects);
+      return reqObjects;
+    } catch (error) {
+      console.log(error);
     }
-    setrequests(reqObjects);
-    return reqObjects;
   };
 
   const getFriends = async () => {
-    let friendList = [];
-    const requests = await friends.getFriends(
-      window.sessionStorage.getItem("userId")
-    );
-    console.log("req", requests);
-    for (let friend of requests) {
-      const friendJSON = Object.assign({}, friend);
-      if (friendJSON.userid.length > 0) {
-        const userInfo = await uinfo.getUserById(friendJSON.userid);
-        friendList.push(userInfo);
-        //console.log(userInfo);
+    try {
+      let friendList = [];
+      const requests = await friends.getFriends(
+        window.sessionStorage.getItem("userId")
+      );
+      for (let friend of requests) {
+        const friendJSON = Object.assign({}, friend);
+        if (friendJSON.userid.length > 0) {
+          const userInfo = await uinfo.getUserById(friendJSON.userid);
+          friendList.push(userInfo);
+        }
       }
+      setmyFriends(friendList);
+      return friendList;
+    } catch (error) {
+      console.log(error);
     }
-    setmyFriends(friendList);
-    return friendList;
   };
 
   const approveRequest = async (event, user) => {
-    console.log(user);
-    const approval = await friends.approveRequest(
-      window.sessionStorage.getItem("userId"),
-      window.sessionStorage.getItem("password"),
-      user.userId
-    );
-    if (approval === 200) {
-      const myRequests = await getRequests();
-      console.log("Inside promise");
-      setrequests(myRequests);
+    try {
+      const approval = await friends.approveRequest(
+        window.sessionStorage.getItem("userId"),
+        window.sessionStorage.getItem("password"),
+        user.userId
+      );
+      if (approval === 200) {
+        const myRequests = await getRequests();
+        setrequests(myRequests);
+      }
+      const userId = window.sessionStorage.getItem("userId");
+      const password = window.sessionStorage.getItem("password");
+      await friends.deleteFromRequested(userId, password, user.userId);
+      await friends.addFriend(userId, password, user.userId, true);
+    } catch (error) {
+      console.log(error);
     }
-    const userId = window.sessionStorage.getItem("userId");
-    const password = window.sessionStorage.getItem("password");
-    await friends.deleteFromRequested(userId, password, user.userId);
-    const addFriend = await friends.addFriend(
-      userId,
-      password,
-      user.userId,
-      true
-    );
-    console.log(addFriend);
-    console.log("approve request success");
   };
 
   const removeFriend = async (event, user) => {
-    console.log(user);
-    console.log(event.currentTarget.textContent);
-    const userId = window.sessionStorage.getItem("userId");
-    const password = window.sessionStorage.getItem("password");
-    if (event.currentTarget.textContent === "Reject") {
-      console.log("deleted");
-      await friends.deleteFromRequested(userId, password, user.userId);
-    }
-    const reject = await friends
-      .removeFriend(userId, password, user.userId)
-      .then(() => {
+    try {
+      const userId = window.sessionStorage.getItem("userId");
+      const password = window.sessionStorage.getItem("password");
+      if (event.currentTarget.textContent === "Reject") {
+        await friends.deleteFromRequested(userId, password, user.userId);
+      }
+      await friends.removeFriend(userId, password, user.userId).then(() => {
         getRequests();
       });
-    console.log("reject request success");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const logout = () => {
@@ -365,19 +365,21 @@ export default function Navbar(props) {
                     style={{ fontSize: 20, color: "#4a79f1" }}
                   />
                 </IconButton>
-                <IconButton
-                  onClick={handleOpen}
-                  size="large"
-                  aria-label="show 17 new notifications"
-                  color="inherit"
-                  id="notifications"
-                >
-                  <Badge badgeContent={requests.length} color="error">
-                    <NotificationsIcon
-                      style={{ fontSize: 20, color: "#4a79f1" }}
-                    />
-                  </Badge>
-                </IconButton>
+                <Tooltip title="Notifications" arrow>
+                  <IconButton
+                    onClick={handleOpen}
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    color="inherit"
+                    id="notifications"
+                  >
+                    <Badge badgeContent={requests.length} color="error">
+                      <NotificationsIcon
+                        style={{ fontSize: 20, color: "#4a79f1" }}
+                      />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
                 <ModalComponent
                   open={open}
                   handleClose={handleClose}

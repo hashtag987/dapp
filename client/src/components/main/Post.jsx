@@ -8,9 +8,8 @@ import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { red } from "@mui/material/colors";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Button } from "@mui/material";
+import { Button, CardMedia } from "@mui/material";
+import { create } from "ipfs-http-client";
 import { useState, useEffect } from "react";
 import { PostService } from "../../services/PostService";
 import { FriendService } from "../../services/FriendService";
@@ -40,6 +39,7 @@ export default function Post() {
   const [messagealert, setmessagealert] = useState(false);
   const [message, setmessage] = useState("");
   const [severity, setseverity] = useState("success");
+  const [imageURL, setimageURL] = useState("");
 
   useEffect(() => {
     setuinfo(new UserInfoService());
@@ -104,8 +104,6 @@ export default function Post() {
         tempPost.username = userInfo.username;
         postsWithUser.push(tempPost);
       }
-      console.log("post");
-      console.log(posts);
       setposts(postsWithUser);
     } catch (error) {
       console.log(error);
@@ -114,12 +112,39 @@ export default function Post() {
 
   const handleChange = ({ currentTarget: input }) => {
     setnewpost(input.value);
-    console.log(newpost);
+  };
+
+  const uploadImage = async (event) => {
+    try {
+      const file = event.target.files[0];
+      const TOKEN = await axios.post(URL.DOMAIN + URL.TOKEN_BUFFER, {
+        id: process.env.REACT_APP_IPFS_PROJECT_ID,
+        key: process.env.REACT_APP_IPFS_PROJECT_SECRECT,
+      });
+      const auth = "Basic " + TOKEN.data.data;
+
+      const client = create({
+        host: "ipfs.infura.io",
+        port: 5001,
+        protocol: "https",
+        headers: {
+          authorization: auth,
+        },
+      });
+      const { cid } = await client.add(file);
+      const url = `https://test-arun.infura-ipfs.io/ipfs/${cid}`;
+      setmessagealert(true);
+      setmessage("Image Uploaded");
+      setseverity("success");
+      setimageURL(url);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const createPost = async () => {
     try {
-      if (newpost.length === 0) {
+      if (newpost.length === 0 && imageURL.length === 0) {
         setmessagealert(true);
         setmessage(STATUS_MESSAGE.EMPTY_POST_CONTENT);
         setseverity("error");
@@ -127,9 +152,12 @@ export default function Post() {
       }
       const userId = window.sessionStorage.getItem("userId");
       const password = window.sessionStorage.getItem("password");
+      const hasImage = imageURL.length > 0;
+      let imageHash = "";
+      if (hasImage) {
+        imageHash = imageURL;
+      }
       const myFriends = await friendsvc.getFriends(userId);
-      console.log("***********post friends*************");
-      console.log(myFriends);
       var today = new Date();
       let dateString = today.toDateString().split(" ");
       let now = dateString[1] + " " + dateString[2] + "," + dateString[3];
@@ -138,8 +166,8 @@ export default function Post() {
       //   mpk: window.sessionStorage.getItem("mpk"),
       // });
       // console.log(res);
-      const postResponse = await postsvc
-        .createPost(userId, password, newpost, now)
+      await postsvc
+        .createPost(userId, password, newpost, now, hasImage, imageHash)
         .then(() => {
           getPosts();
         });
@@ -158,9 +186,12 @@ export default function Post() {
           password,
           newpost,
           now,
-          friend.userid
+          friend.userid,
+          hasImage,
+          imageHash
         );
       }
+      setimageURL("");
       setnewpost("");
     } catch (error) {
       console.log(error);
@@ -185,7 +216,7 @@ export default function Post() {
       <Card sx={{ maxWidth: 600, marginBottom: 2 }}>
         <CardHeader
           avatar={
-            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe"></Avatar>
+            <Avatar sx={{ bgcolor: "#4a79f1" }} aria-label="recipe"></Avatar>
           }
           title="You"
         />
@@ -229,29 +260,34 @@ export default function Post() {
             }}
           >
             Upload image
-            <input type="file" hidden />
+            <input type="file" onChange={uploadImage} hidden />
           </Button>
         </CardActions>
       </Card>
-      {posts.length == 0 ? (
+      {posts.length === 0 ? (
         <div className="message-center">{STATUS_MESSAGE.EMPTY_POSTS}</div>
       ) : (
         posts.map((post, index) => (
           <Card sx={{ maxWidth: 600, marginBottom: 2 }} key={index}>
             <CardHeader
               avatar={
-                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                <Avatar sx={{ bgcolor: "#4a79f1" }} aria-label="recipe">
                   {post.username.charAt(0).toUpperCase()}
                 </Avatar>
-              }
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVertIcon />
-                </IconButton>
               }
               title={post.username}
               subheader={post.timeStamp}
             />
+            {post.hasImage ? (
+              <CardMedia
+                component="img"
+                height="394"
+                image={post.imageHash}
+                alt="Paella dish"
+              />
+            ) : (
+              <></>
+            )}
             <CardContent>
               <Typography variant="body2" color="text.secondary">
                 {post.post}

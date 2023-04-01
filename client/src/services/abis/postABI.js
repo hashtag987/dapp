@@ -1,126 +1,156 @@
-export const PostABI=  [
+export const PostABI = [
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "post",
-        "type": "string"
+        internalType: "string",
+        name: "post",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "timeStamp",
-        "type": "string"
+        internalType: "string",
+        name: "timeStamp",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "userId",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+      {
+        internalType: "bool",
+        name: "hasImage",
+        type: "bool",
+      },
+      {
+        internalType: "string",
+        name: "imageHash",
+        type: "string",
+      },
     ],
-    "name": "createPost",
-    "outputs": [
+    name: "createPost",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "int32",
-            "name": "status",
-            "type": "int32"
+            internalType: "int32",
+            name: "status",
+            type: "int32",
           },
           {
-            "internalType": "string",
-            "name": "message",
-            "type": "string"
-          }
+            internalType: "string",
+            name: "message",
+            type: "string",
+          },
         ],
-        "internalType": "struct PostContract.Message",
-        "name": "",
-        "type": "tuple"
-      }
+        internalType: "struct PostContract.Message",
+        name: "",
+        type: "tuple",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "post",
-        "type": "string"
+        internalType: "string",
+        name: "post",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "timeStamp",
-        "type": "string"
+        internalType: "string",
+        name: "timeStamp",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "userId",
-        "type": "string"
+        internalType: "string",
+        name: "userId",
+        type: "string",
       },
       {
-        "internalType": "string",
-        "name": "friendId",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "friendId",
+        type: "string",
+      },
+      {
+        internalType: "bool",
+        name: "hasImage",
+        type: "bool",
+      },
+      {
+        internalType: "string",
+        name: "imageHash",
+        type: "string",
+      },
     ],
-    "name": "mapPostToFriend",
-    "outputs": [
+    name: "mapPostToFriend",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "int32",
-            "name": "status",
-            "type": "int32"
+            internalType: "int32",
+            name: "status",
+            type: "int32",
           },
           {
-            "internalType": "string",
-            "name": "message",
-            "type": "string"
-          }
+            internalType: "string",
+            name: "message",
+            type: "string",
+          },
         ],
-        "internalType": "struct PostContract.Message",
-        "name": "",
-        "type": "tuple"
-      }
+        internalType: "struct PostContract.Message",
+        name: "",
+        type: "tuple",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "userId",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
     ],
-    "name": "getPosts",
-    "outputs": [
+    name: "getPosts",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "string",
-            "name": "userId",
-            "type": "string"
+            internalType: "string",
+            name: "userId",
+            type: "string",
           },
           {
-            "internalType": "string",
-            "name": "post",
-            "type": "string"
+            internalType: "string",
+            name: "post",
+            type: "string",
           },
           {
-            "internalType": "string",
-            "name": "timeStamp",
-            "type": "string"
-          }
+            internalType: "string",
+            name: "timeStamp",
+            type: "string",
+          },
+          {
+            internalType: "bool",
+            name: "hasImage",
+            type: "bool",
+          },
+          {
+            internalType: "string",
+            name: "imageHash",
+            type: "string",
+          },
         ],
-        "internalType": "struct PostContract.Post[]",
-        "name": "",
-        "type": "tuple[]"
-      }
+        internalType: "struct PostContract.Post[]",
+        name: "",
+        type: "tuple[]",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  }
-]
+    stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+];

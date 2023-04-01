@@ -1,4 +1,4 @@
-export const WEB3PROVIDER = "http://127.0.0.1:8702";
+export const WEB3PROVIDER = "http://127.0.0.1:8701";
 export const ETH_PROVIDER = "0x4136AC02C02265743d839125Aa6625245f662595";
 export const LOGO_TEXT = "SOCIALIZE";
 //api URLS
@@ -29,9 +29,9 @@ export const STATUS_MESSAGE = {
   USER_ALREADY_EXISTS: "Username already exists!",
   USER_DOESNT_EXISTS: "Username doesn't exists!",
   INVALID_USER: "Invalid Username or Password",
-  EMPTY_NOTIFICATIONS: "Currently there no notifications for you🙂",
-  EMPTY_FRIENDS: "Looks like you're alone😔",
-  EMPTY_POSTS: "Enna onnum kaanom🤨?",
+  EMPTY_NOTIFICATIONS: "Currently there no notifications for you",
+  EMPTY_FRIENDS: "Looks like you're alone. Add some friends",
+  EMPTY_POSTS: "No posts Found❕",
   EMPTY_POST_CONTENT: "Post content cannot be empty",
 };
 

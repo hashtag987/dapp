@@ -1,5 +1,4 @@
 import React from "react";
-import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
@@ -21,17 +20,15 @@ const ModalComponent = ({
   removeFriend,
 }) => {
   const style = {
+    zIndex: 2,
     position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 400,
-    height: 300,
-    maxHeight: 800,
-    overflowY: "auto",
+    top: "70px",
+    padding: 10,
+    right: usage === REUSABLE.NOTIFICATION ? "70px" : "110px",
+    width: 300,
+    borderRadius: 1,
     bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
+    boxShadow: 10,
     p: 4,
   };
   return (
@@ -42,10 +39,9 @@ const ModalComponent = ({
         open={open}
         onClose={handleClose}
         closeAfterTransition
-        slots={{ backdrop: Backdrop }}
         slotProps={{
           backdrop: {
-            timeout: 500,
+            invisible: true,
           },
         }}
       >
@@ -68,11 +64,13 @@ const ModalComponent = ({
                       <ListItemText
                         primary={content.name}
                         secondary={content.username}
+                        primaryTypographyProps={{ sx: { fontSize: 13 } }}
+                        secondaryTypographyProps={{ sx: { fontSize: 13 } }}
                       />
                       <div id={"fgfh"}>
-                        {usage == REUSABLE.NOTIFICATION ? (
+                        {usage === REUSABLE.NOTIFICATION ? (
                           <Button
-                            className="not-button"
+                            className="accept-button"
                             variant="contained"
                             onClick={(e) => approveRequest(e, content)}
                           >
@@ -83,10 +81,12 @@ const ModalComponent = ({
                         )}
                         <Button
                           className="not-button"
-                          variant="contained"
+                          variant="outlined"
                           onClick={(e) => removeFriend(e, content)}
                         >
-                          {usage == REUSABLE.NOTIFICATION ? "Reject" : "Remove"}
+                          {usage === REUSABLE.NOTIFICATION
+                            ? "Reject"
+                            : "Remove"}
                         </Button>
                       </div>
                     </ListItem>

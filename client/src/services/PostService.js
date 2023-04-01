@@ -1,6 +1,6 @@
 import React from "react";
 import Web3 from "web3";
-import { CONTRACT, ETH_PROVIDER, WEB3PROVIDER } from "../constants";
+import { CONTRACT, WEB3PROVIDER } from "../constants";
 import { PostABI } from "./abis/postABI";
 import { ContainerService } from "./ContainerService";
 export class PostService extends React.Component {
@@ -16,67 +16,86 @@ export class PostService extends React.Component {
     return Math.ceil(block.baseFeePerGas);
   };
 
-  createPost = async (account, password, postHash, timestamp) => {
+  createPost = async (
+    account,
+    password,
+    postHash,
+    timestamp,
+    hasImage,
+    imageHash
+  ) => {
     await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
-      .createPost(postHash, timestamp, account)
+      .createPost(postHash, timestamp, account, hasImage, imageHash)
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
         if (error) {
           console.log(error);
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     const postResponse = await this.props.auth.methods
-      .createPost(postHash, timestamp, account)
+      .createPost(postHash, timestamp, account, hasImage, imageHash)
       .send({
         from: account,
         gasPrice: gasEstimate,
         maxFeePerGas: next_gas_price,
         gas: 6721975,
       });
-      console.log("******Post******");
-      return postResponse
+    return postResponse;
   };
 
-  mapPostToFriend = async (account, password, postHash, timestamp, friendId) => {
+  mapPostToFriend = async (
+    account,
+    password,
+    postHash,
+    timestamp,
+    friendId,
+    hasImage,
+    imageHash
+  ) => {
     await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
-      .mapPostToFriend(postHash, timestamp, account, friendId)
+      .mapPostToFriend(
+        postHash,
+        timestamp,
+        account,
+        friendId,
+        hasImage,
+        imageHash
+      )
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
         if (error) {
           console.log(error);
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     const postResponse = await this.props.auth.methods
-      .mapPostToFriend(postHash, timestamp, account, friendId)
+      .mapPostToFriend(
+        postHash,
+        timestamp,
+        account,
+        friendId,
+        hasImage,
+        imageHash
+      )
       .send({
         from: account,
         gasPrice: gasEstimate,
         maxFeePerGas: next_gas_price,
         gas: 6721975,
       });
-      console.log("******Post to Friends******");
-      return postResponse
+    return postResponse;
   };
 
   getPosts = async (userId) => {
-    try {
-      let posts = [];
-      const response = await this.props.auth.methods.getPosts(userId).call();
-      for (let post of response) {
-        posts.push(Object.assign({}, post));
-      }
-      return posts;
-    } catch (error) {
-      console.log(error);
+    let posts = [];
+    const response = await this.props.auth.methods.getPosts(userId).call();
+    for (let post of response) {
+      posts.push(Object.assign({}, post));
     }
+    return posts;
   };
   constructor() {
     super();

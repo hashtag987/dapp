@@ -1,6 +1,6 @@
 import React from "react";
 import Web3 from "web3";
-import { CONTRACT, ETH_PROVIDER, WEB3PROVIDER } from "../constants";
+import { CONTRACT, WEB3PROVIDER } from "../constants";
 import { USER_INFO_ABI } from "./abis/userInfoABI";
 import { ContainerService } from "./ContainerService";
 export class UserInfoService extends React.Component {
@@ -26,9 +26,7 @@ export class UserInfoService extends React.Component {
         }
         if (gasAmount === 6721975) console.log("Method ran out of gas");
       });
-    console.log(gasEstimate);
     const next_gas_price = await this.getMaxfeePerGas();
-    console.log(next_gas_price);
     await this.props.auth.methods
       .addUserInfo(account, name, userName, masterPublicKey)
       .send({
@@ -53,40 +51,24 @@ export class UserInfoService extends React.Component {
   }
 
   getRecommendations = async (friendsOrRequests) => {
-    try {
-      let users = [];
-      const response = await this.props.auth.methods
-        .getRecommendations(friendsOrRequests)
-        .call();
-      for (let user of response) {
-        users.push(Object.assign({}, user));
-      }
-      return users;
-    } catch (error) {
-      console.log(error);
+    let users = [];
+    const response = await this.props.auth.methods
+      .getRecommendations(friendsOrRequests)
+      .call();
+    for (let user of response) {
+      users.push(Object.assign({}, user));
     }
+    return users;
   };
 
   getUser = async (username) => {
-    try {
-      //await this.props.web3.eth.personal.unlockAccount(account, password, 60);
-      console.log(username);
-      const user = await this.props.auth.methods.getUser(username).call();
-      console.log(user);
-      return Object.assign({}, user);
-    } catch (error) {
-      console.log(error);
-    }
+    const user = await this.props.auth.methods.getUser(username).call();
+    return Object.assign({}, user);
   };
 
   getUserById = async (userId) => {
-    try {
-      const user = await this.props.auth.methods.getUserById(userId).call();
-      //console.log(user)
-      return Object.assign({}, user);
-    } catch (error) {
-      console.log(error);
-    }
+    const user = await this.props.auth.methods.getUserById(userId).call();
+    return Object.assign({}, user);
   };
 
   createWeb3 = async (e) => {
@@ -95,6 +77,6 @@ export class UserInfoService extends React.Component {
       USER_INFO_ABI,
       CONTRACT.USER_MANAGEMENT_CONTRACT
     );
-    // this.props.accounts = await this.props.web3.eth.getAccounts();
+    this.props.accounts = await this.props.web3.eth.getAccounts();
   };
 }

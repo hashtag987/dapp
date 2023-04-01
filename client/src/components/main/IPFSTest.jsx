@@ -14,7 +14,6 @@ const IPFSTest = () => {
       id: projectId,
       key: projectSecret,
     });
-    console.log(TOKEN);
     const auth = "Basic " + TOKEN.data.data;
 
     const client = create({
@@ -26,10 +25,9 @@ const IPFSTest = () => {
       },
     });
     const { cid } = await client.add(file);
-    const url = `https://ipfs.io/ipfs/${cid}`;
-    console.log(cid);
-    window.location.href=url;
-    setImageUrl(url);
+    const urlGate = `https://test-arun.infura-ipfs.io/ipfs/${cid}`;
+    window.location.href = urlGate;
+    setImageUrl(urlGate);
   }
   return (
     <div>

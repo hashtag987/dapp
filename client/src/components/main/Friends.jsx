@@ -16,37 +16,43 @@ const Friends = ({ getRequests, getFriends }) => {
   const [users, setusers] = useState([]);
   const [friends, setfriends] = useState(null);
   // const getAllUsers = async () => {
-  //   if (userInfo != null) {
-  //     const allUsers = await userInfo.getAllusers();
-  //     setusers(allUsers);
+  //   try {
+  //     if (userInfo != null) {
+  //       const allUsers = await userInfo.getAllusers();
+  //       setusers(allUsers);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
   //   }
   // };
 
   const getRecommendations = async () => {
-    const friendsOrRequests = [];
-    const requests = await getRequests();
-    const myfriends = await getFriends();
-    const userId = window.sessionStorage.getItem("userId");
-    const requestedFriends = await friends.getRequested(userId);
-    console.log(requestedFriends);
-    for (let user of requests) {
-      if (user.userId.length > 0) {
-        friendsOrRequests.push(user.userId);
+    try {
+      const friendsOrRequests = [];
+      const requests = await getRequests();
+      const myfriends = await getFriends();
+      const userId = window.sessionStorage.getItem("userId");
+      const requestedFriends = await friends.getRequested(userId);
+      for (let user of requests) {
+        if (user.userId.length > 0) {
+          friendsOrRequests.push(user.userId);
+        }
       }
-    }
-    for (let user of myfriends) {
-      if (user.userId.length > 0) {
-        friendsOrRequests.push(user.userId);
+      for (let user of myfriends) {
+        if (user.userId.length > 0) {
+          friendsOrRequests.push(user.userId);
+        }
       }
-    }
-    for (let user of requestedFriends) {
-      if (user.length > 0) {
-        friendsOrRequests.push(user);
+      for (let user of requestedFriends) {
+        if (user.length > 0) {
+          friendsOrRequests.push(user);
+        }
       }
+      const recUsers = await userInfo.getRecommendations(friendsOrRequests);
+      setusers(recUsers);
+    } catch (error) {
+      console.log(error);
     }
-    const recUsers = await userInfo.getRecommendations(friendsOrRequests);
-    console.log(recUsers);
-    setusers(recUsers);
   };
   useEffect(() => {
     setuserInfo(new UserInfoService());
@@ -60,18 +66,15 @@ const Friends = ({ getRequests, getFriends }) => {
   }, [friends, requested]);
 
   const handleClick = async (user, event) => {
-    // event.preventDefault();
-    setrequested({ ...requested, [event.currentTarget.id]: true });
-    const userId = window.sessionStorage.getItem("userId");
-    const password = window.sessionStorage.getItem("password");
-    await friends.addFriend(
-      userId,
-      password,
-      user.userId,
-      false
-    );
-    const request = await friends.addToRequested(userId, password, user.userId);
-    console.log(request);
+    try {
+      setrequested({ ...requested, [event.currentTarget.id]: true });
+      const userId = window.sessionStorage.getItem("userId");
+      const password = window.sessionStorage.getItem("password");
+      await friends.addFriend(userId, password, user.userId, false);
+      await friends.addToRequested(userId, password, user.userId);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="cards">
@@ -100,14 +103,6 @@ const Friends = ({ getRequests, getFriends }) => {
                 </ListItemAvatar>
                 <ListItemText primary={user.name} secondary={user.username} />
                 <div id={"fr" + index} onClick={(e) => handleClick(user, e)}>
-                  {/* <PersonAddAlt1Icon
-                  style={{
-                    cursor: "pointer",
-                    float: "right",
-                    marginBottom: "8px",
-                    fontSize: "20px",
-                  }}
-                /> */}
                   {requested["fr" + index] ? (
                     <HowToRegIcon
                       style={{
