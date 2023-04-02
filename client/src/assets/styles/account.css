@@ -24,7 +24,7 @@
 }
 
 .main__avatar {
-  background: url("https://unsplash.it/150/?image=209");
+  /* background: url("https://unsplash.it/150/?image=209"); */
   background-size: cover;
   width: 150px;
   height: 150px;
@@ -61,8 +61,15 @@
 }
 
 .main__input-label {
+  font-size: 20px;
+  color: #2e2e2e;
+  display: block;
+  text-align: center;
+  margin: 5px 5px 5px 5px;
+}
+.main__input-label-user {
   font-size: 80%;
-  color: #c4c1c9;
+  color: #2e2e2e;
   display: block;
   margin: 5px 5px 5px 5px;
 }
@@ -108,6 +115,52 @@
   background: #fff;
   border: 1px solid #4a79f1;
   margin-left: 50px;
+}
+
+.flex-box {
+  display: grid;
+  grid-template-columns: 100px 100px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.cards .card {
+  margin: 10px;
+}
+
+.card-sub-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: center;
+  padding: 15px 30px;
+}
+.button-group {
+  display: grid;
+  grid-template-columns: 90px 90px;
+  place-items: center;
+  padding: 15px 30px;
+  margin-left: 270px;
+}
+
+.btn-action{
+  text-transform: none !important;
+  height: 30px !important;
+  width: 50px !important;
+}
+
+.profile-change{
+  font-size: 12px !important;
+  margin-left: 230px !important;
+  margin-bottom: 10px;
+}
+
+.back-to-home{
+  position:absolute;
+  top: 20px;
+  left:20px;
+  color: #4a79f1;
 }
 
 @media (max-width: 764px) {

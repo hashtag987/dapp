@@ -324,7 +324,14 @@ export default function Navbar(props) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose} style={{ fontSize: 13 }}>
+      <MenuItem
+        onClick={() => {
+          navigate(
+            "/home/" + window.sessionStorage.getItem("username") + "/account"
+          );
+        }}
+        style={{ fontSize: 13 }}
+      >
         My Account
       </MenuItem>
       <MenuItem onClick={logout} style={{ fontSize: 13 }}>

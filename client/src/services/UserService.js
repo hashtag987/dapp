@@ -16,6 +16,27 @@ export class UserService extends React.Component {
     this.createWeb3();
   }
 
+  getBalance = async (userId) => {
+    const balanceInWei = await this.props.web3.eth.getBalance(userId);
+    return this.props.web3.utils.fromWei(balanceInWei, "ether");
+  };
+
+  getTransactionsCount = async (userId) => {
+    let block = await this.props.web3.eth.getBlock("latest");
+    let transactions = block.transactions;
+    let count = 0;
+    if (block != null && transactions != null) {
+      for (let txHash of transactions) {
+        let tx = await this.props.web3.eth.getTransaction(txHash);
+        if (userId === tx.from) {
+          count++;
+          // console.log("from: " + tx.from.toLowerCase() + " to: " + tx.to.toLowerCase() + " value: " + tx.value);
+        }
+      }
+    }
+    return count;
+  };
+  
   getUser = async (username) => {
     const user = await this.props.auth.methods.getUser(username).call();
     return Object.assign({}, user);
