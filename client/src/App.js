@@ -1,11 +1,12 @@
 import './App.css';
+import './assets/styles/account.css';
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Register from './components/Auth/Register';
 import Login from './components/Auth/Login';
 import Post from './components/main/Post';
 import Home from './components/main/Home';
 import IPFSTest from './components/main/IPFSTest';
-// import Account from './components/main/Account';
+import Account from './components/main/Account';
 function App() {
   return (
     <BrowserRouter>
@@ -15,7 +16,7 @@ function App() {
         <Route path="/home/:username" element={<Home/>}/>
         <Route path="/post" element={<Post/>}/>
         <Route path="/ipfs" element={<IPFSTest/>}/>
-        {/* <Route path="/account" element={<Account/>}/> */}
+        <Route path="/home/:username/account" element={<Account/>}/>
       </Routes>
     </BrowserRouter>
   );
