@@ -30,7 +30,6 @@ const SearchFriends = ({ searchContent }) => {
   useEffect(() => {
     setfilteredUsers(
       users.filter((user) => {
-        console.log(user);
         return user.name.toLowerCase().includes(searchContent.toLowerCase());
       })
     );
@@ -45,14 +44,13 @@ const SearchFriends = ({ searchContent }) => {
     borderRadius: 1,
     bgcolor: "background.paper",
     boxShadow: 10,
-    p: 1,
+    p: 0,
   };
 
   const getAllUsers = async () => {
     try {
       if (userInfosvc != null) {
         const allUsers = await userInfosvc.getAllusers();
-        console.log(allUsers);
         setusers(allUsers);
       }
     } catch (error) {
@@ -109,11 +107,11 @@ const SearchFriends = ({ searchContent }) => {
                       </Button>
                     </div> */}
                   </ListItem>
-                  {filteredUsers.length > 1 ? (
+                  {/* {filteredUsers.length > 1 ? (
                     <Divider variant="inset" component="li" />
                   ) : (
                     <></>
-                  )}
+                  )} */}
                 </div>
               ))
             )}

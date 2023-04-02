@@ -9,7 +9,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import HowToRegIcon from "@mui/icons-material/HowToReg";
 import { UserInfoService } from "../../../services/UserInfoService";
 import { FriendService } from "../../../services/FriendService";
-
+import {LOGO_COLOR,UI} from "../../../constants";
 const FriendRecommendations = ({ getRequests, getFriends }) => {
   const [requested, setrequested] = useState({});
   const [userInfo, setuserInfo] = useState(null);
@@ -68,6 +68,10 @@ const FriendRecommendations = ({ getRequests, getFriends }) => {
   };
   return (
     <div className="cards">
+      <div className="recommedantions-header">
+        {UI.RECOMMENDATIONS_HEADER}
+        <Divider sx={{ width: 250, pt: 1 }} />
+      </div>
       <List
         sx={{
           marginTop: 7,
@@ -77,6 +81,7 @@ const FriendRecommendations = ({ getRequests, getFriends }) => {
           bgcolor: "background.paper",
           padding: "10px",
           overflow: "auto",
+          p: -1,
         }}
       >
         {users
@@ -86,12 +91,25 @@ const FriendRecommendations = ({ getRequests, getFriends }) => {
               user.username.length > 0
           )
           .map((user, index) => (
-            <div>
-              <ListItem key={"fr" + index}>
+            <div key={index}>
+              <ListItem>
                 <ListItemAvatar>
-                  <Avatar>{user.username.charAt(0).toUpperCase()}</Avatar>
+                  <Avatar
+                    sx={{
+                      fontSize: 19,
+                      height: 35,
+                      width: 35,
+                    }}
+                  >
+                    {user.username.charAt(0).toUpperCase()}
+                  </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={user.name} secondary={user.username} />
+                <ListItemText
+                  primary={user.name}
+                  secondary={user.username}
+                  primaryTypographyProps={{ sx: { fontSize: 12 } }}
+                  secondaryTypographyProps={{ sx: { fontSize: 12 } }}
+                />
                 <div id={"fr" + index} onClick={(e) => handleClick(user, e)}>
                   {requested["fr" + index] ? (
                     <HowToRegIcon
@@ -100,6 +118,7 @@ const FriendRecommendations = ({ getRequests, getFriends }) => {
                         float: "right",
                         marginBottom: "8px",
                         fontSize: "20px",
+                        color: LOGO_COLOR,
                       }}
                     />
                   ) : (
@@ -109,12 +128,13 @@ const FriendRecommendations = ({ getRequests, getFriends }) => {
                         float: "right",
                         marginBottom: "8px",
                         fontSize: "20px",
+                        color: LOGO_COLOR,
                       }}
                     />
                   )}
                 </div>
               </ListItem>
-              <Divider variant="inset" component="li" />
+              {/* <Divider variant="inset" component="li" /> */}
             </div>
           ))}
       </List>

@@ -4,7 +4,7 @@ import { UserService } from "../../services/UserService";
 import { Link, useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 import axios from "axios";
-import { URL, STATUS_MESSAGE } from "../../constants";
+import { URL, STATUS_MESSAGE, LOGO_COLOR,UI } from "../../constants";
 import Alertbox from "../../utils/AlertBox";
 import { UserInfoService } from "../../services/UserInfoService";
 const Login = () => {
@@ -107,7 +107,7 @@ const Login = () => {
           <p className="header-text">
             <Typewriter
               onInit={(typewriter) => {
-                typewriter.typeString("Welcome Back").pauseFor(1000).start();
+                typewriter.typeString(UI.LOGIN_HOME_TEXT).pauseFor(1000).start();
               }}
             />
           </p>
@@ -185,7 +185,7 @@ const Login = () => {
               onClick={handleSubmit}
               fullWidth
               size="medium"
-              style={{ margin: "10px", textTransform: "none" }}
+              style={{ margin: "10px", textTransform: "none",backgroundColor:LOGO_COLOR }}
             >
               Log in
             </Button>
@@ -196,7 +196,7 @@ const Login = () => {
                 fontSize: 13,
               }}
             >
-              Don't have an account? <Link to="/">Register here</Link>
+              Don't have an account? <Link to="/" style={{color:LOGO_COLOR}}>Register here</Link>
             </div>
           </form>
         </div>

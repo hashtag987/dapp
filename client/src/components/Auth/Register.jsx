@@ -4,11 +4,10 @@ import { UserService } from "../../services/UserService";
 import { Link, useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 import axios from "axios";
-import { URL, STATUS_MESSAGE } from "../../constants";
+import { URL, STATUS_MESSAGE, LOGO_COLOR,UI } from "../../constants";
 import Alertbox from "../../utils/AlertBox";
 import { UserInfoService } from "../../services/UserInfoService";
 import { FriendService } from "../../services/FriendService";
-
 const Register = () => {
   let account = "";
   const navigate = useNavigate();
@@ -109,7 +108,7 @@ const Register = () => {
         window.sessionStorage.setItem("token", encData.temp);
         window.sessionStorage.setItem("mpk", encData.masterPublicKey);
         window.sessionStorage.setItem("userId", account);
-        window.sessionStorage.setItem("password", encData.password);
+        window.sessionStorage.setItem("password", encData.passwordEnc);
         setmessagealert(true);
         setmessage(STATUS_MESSAGE.REGISTER_SUCCESS);
         setseverity("success");
@@ -157,7 +156,7 @@ const Register = () => {
           <p className="header-text">
             <Typewriter
               onInit={(typewriter) => {
-                typewriter.typeString("Hello there...").pauseFor(1000).start();
+                typewriter.typeString(UI.REGISTER_HOME_TEXT).pauseFor(1000).start();
               }}
             />
           </p>
@@ -313,7 +312,7 @@ const Register = () => {
               onClick={handleSubmit}
               fullWidth
               size="medium"
-              style={{ margin: "10px", textTransform: "none" }}
+              style={{ margin: "10px", textTransform: "none",backgroundColor:LOGO_COLOR }}
             >
               Sign Up
             </Button>
@@ -324,7 +323,7 @@ const Register = () => {
                 fontSize: 13,
               }}
             >
-              Already have an account? <Link to="/login">Login here</Link>
+              Already have an account? <Link to="/login" style={{color:LOGO_COLOR}}>Login here</Link>
             </div>
           </form>
         </div>

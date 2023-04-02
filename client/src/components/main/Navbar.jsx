@@ -19,7 +19,7 @@ import useScrollTrigger from "@mui/material/useScrollTrigger";
 import Fab from "@mui/material/Fab";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Fade from "@mui/material/Fade";
-import { LOGO_TEXT, REUSABLE } from "../../constants";
+import { LOGO_COLOR, LOGO_TEXT, REUSABLE, UI } from "../../constants";
 import ModalComponent from "../../utils/ModalComponent";
 import { useNavigate } from "react-router-dom";
 import { STATUS_MESSAGE } from "../../constants";
@@ -352,28 +352,30 @@ export default function Navbar(props) {
               </Typography>
               <Search>
                 <SearchIconWrapper>
-                  <SearchIcon style={{ fontSize: 20, color: "#4a79f1" }} />
+                  <SearchIcon style={{ fontSize: 20, color: LOGO_COLOR }} />
                 </SearchIconWrapper>
                 <StyledInputBase
                   onChange={handleChange}
-                  placeholder="Find Friends..."
+                  placeholder={UI.SEARCH_PLACEHOLDER}
                   inputProps={{ "aria-label": "search" }}
                 />
                 <SearchFriends searchContent={searchContent} />
               </Search>
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
-                <IconButton
-                  onClick={handleOpen}
-                  size="large"
-                  aria-label="show 17 new notifications"
-                  color="inherit"
-                  id="friends"
-                >
-                  <PeopleAltRoundedIcon
-                    style={{ fontSize: 20, color: "#4a79f1" }}
-                  />
-                </IconButton>
+                <Tooltip title="Friends" arrow>
+                  <IconButton
+                    onClick={handleOpen}
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    color="inherit"
+                    id="friends"
+                  >
+                    <PeopleAltRoundedIcon
+                      style={{ fontSize: 20, color: LOGO_COLOR }}
+                    />
+                  </IconButton>
+                </Tooltip>
                 <Tooltip title="Notifications" arrow>
                   <IconButton
                     onClick={handleOpen}
@@ -384,7 +386,7 @@ export default function Navbar(props) {
                   >
                     <Badge badgeContent={requests.length} color="error">
                       <NotificationsIcon
-                        style={{ fontSize: 20, color: "#4a79f1" }}
+                        style={{ fontSize: 20, color: LOGO_COLOR }}
                       />
                     </Badge>
                   </IconButton>
@@ -406,7 +408,7 @@ export default function Navbar(props) {
                   onClick={handleProfileMenuOpen}
                   color="inherit"
                 >
-                  <AccountCircle style={{ fontSize: 20, color: "#4a79f1" }} />
+                  <AccountCircle style={{ fontSize: 20, color: LOGO_COLOR }} />
                 </IconButton>
               </Box>
               <Box sx={{ display: { xs: "flex", md: "none" } }}>
