@@ -29,10 +29,11 @@
   width: 150px;
   height: 150px;
   display: block;
-  vertical-align: middle;
   margin: 20px auto;
   border-radius: 50%;
   overflow: hidden;
+  position: relative;
+  top: -30px;
 }
 
 .main__avatar:hover .main__avatar--overlay {
@@ -55,6 +56,8 @@
   max-width: 80%;
   display: block;
   margin: 0 auto;
+  position: relative;
+  top: -20px;
 }
 
 .main__input-label {
@@ -81,6 +84,7 @@
 }
 
 .btn {
+  margin-top: 10px;
   margin-bottom: 20px;
   font-family: "Montserrat", sans-serif;
   border: none;
@@ -92,20 +96,18 @@
 
 .main__save-button {
   color: #fff;
-  background-color: #8ed081;
-}
-.main__save-button:hover {
-  background-color: #6dc25c;
+  background-color: #4a79f1;
   cursor: pointer;
+  border: 1px solid #4a79f1;
+  margin-left: 250px;
 }
 
 .main__cancel-button {
-  color: #fff;
-  background: #ccc;
-}
-.main__cancel-button:hover {
-  background-color: #b3b3b3;
+  color: #4a79f1;
   cursor: pointer;
+  background: #fff;
+  border: 1px solid #4a79f1;
+  margin-left: 50px;
 }
 
 @media (max-width: 764px) {

@@ -13,22 +13,9 @@ const Account = () => {
                     </div>
                     <div class="main__settings-form">
                         <form action="#" method="post">
-                            <label class="main__input-label">Your name:</label>
+                            <label class="main__input-label">Username</label>
                             <input class="main__input" placeholder="John Doe" type="text" />
-                            <label class="main__input-label">Your e-mail:</label>
-                            <input
-                                class="main__input"
-                                placeholder="johndoe@gmail.com"
-                                type="text"
-                            />
-                            <label class="main__input-label"
-                            >Your e-mail for notifications:</label
-                            >
-                            <input
-                                class="main__input"
-                                placeholder="johndoe@gmail.com"
-                                type="text"
-                            />
+                            <button class="btn main__change-pw-button">Change Password</button>
                         </form>
                         <button class="btn main__save-button">Save</button>
                         <button class="btn main__cancel-button">Cancel</button>
