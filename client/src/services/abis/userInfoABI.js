@@ -18,6 +18,11 @@ export const USER_INFO_ABI = [
       },
       {
         internalType: "string",
+        name: "profileImage",
+        type: "string",
+      },
+      {
+        internalType: "string",
         name: "masterPublickey",
         type: "string",
       },
@@ -68,6 +73,11 @@ export const USER_INFO_ABI = [
           },
           {
             internalType: "string",
+            name: "profileImage",
+            type: "string",
+          },
+          {
+            internalType: "string",
             name: "masterPublicKey",
             type: "string",
           },
@@ -106,6 +116,11 @@ export const USER_INFO_ABI = [
           {
             internalType: "string",
             name: "username",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "profileImage",
             type: "string",
           },
           {
@@ -152,6 +167,11 @@ export const USER_INFO_ABI = [
           },
           {
             internalType: "string",
+            name: "profileImage",
+            type: "string",
+          },
+          {
+            internalType: "string",
             name: "masterPublicKey",
             type: "string",
           },
@@ -159,6 +179,44 @@ export const USER_INFO_ABI = [
         internalType: "struct UserManagementContract.User",
         name: "",
         type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "profileImage",
+        type: "string",
+      },
+    ],
+    name: "changeProfile",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+    ],
+    name: "getProfile",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -190,6 +248,11 @@ export const USER_INFO_ABI = [
           {
             internalType: "string",
             name: "username",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "profileImage",
             type: "string",
           },
           {

@@ -30,13 +30,12 @@ export class UserService extends React.Component {
         let tx = await this.props.web3.eth.getTransaction(txHash);
         if (userId === tx.from) {
           count++;
-          // console.log("from: " + tx.from.toLowerCase() + " to: " + tx.to.toLowerCase() + " value: " + tx.value);
         }
       }
     }
     return count;
   };
-  
+
   getUser = async (username) => {
     const user = await this.props.auth.methods.getUser(username).call();
     return Object.assign({}, user);

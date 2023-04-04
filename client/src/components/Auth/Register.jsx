@@ -4,7 +4,7 @@ import { UserService } from "../../services/UserService";
 import { Link, useNavigate } from "react-router-dom";
 import Typewriter from "typewriter-effect";
 import axios from "axios";
-import { URL, STATUS_MESSAGE, LOGO_COLOR,UI } from "../../constants";
+import { URL, STATUS_MESSAGE, LOGO_COLOR, UI } from "../../constants";
 import Alertbox from "../../utils/AlertBox";
 import { UserInfoService } from "../../services/UserInfoService";
 import { FriendService } from "../../services/FriendService";
@@ -99,7 +99,8 @@ const Register = () => {
           data.username,
           encData.passwordEnc,
           encData.masterPublicKey,
-          account
+          account,
+          ""
         );
         await friends.addUserId(account, encData.passwordEnc);
         window.sessionStorage.setItem("name", data.name);
@@ -156,7 +157,10 @@ const Register = () => {
           <p className="header-text">
             <Typewriter
               onInit={(typewriter) => {
-                typewriter.typeString(UI.REGISTER_HOME_TEXT).pauseFor(1000).start();
+                typewriter
+                  .typeString(UI.REGISTER_HOME_TEXT)
+                  .pauseFor(1000)
+                  .start();
               }}
             />
           </p>
@@ -312,7 +316,11 @@ const Register = () => {
               onClick={handleSubmit}
               fullWidth
               size="medium"
-              style={{ margin: "10px", textTransform: "none",backgroundColor:LOGO_COLOR }}
+              style={{
+                margin: "10px",
+                textTransform: "none",
+                backgroundColor: LOGO_COLOR,
+              }}
             >
               Sign Up
             </Button>
@@ -323,7 +331,10 @@ const Register = () => {
                 fontSize: 13,
               }}
             >
-              Already have an account? <Link to="/login" style={{color:LOGO_COLOR}}>Login here</Link>
+              Already have an account?{" "}
+              <Link to="/login" style={{ color: LOGO_COLOR }}>
+                Login here
+              </Link>
             </div>
           </form>
         </div>

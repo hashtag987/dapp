@@ -101,7 +101,7 @@ router.post("/tokenbuffer", async (req, res) => {
 const validateRegister = (data) => {
   const schema = Joi.object({
     name: Joi.string().max(30).required().label("Name"),
-    confirmpassword: Joi.string().required().label("Conformation Password"),
+    confirmpassword: Joi.string().required().label("Confirmation Password"),
     username: Joi.string().min(5).max(200).required().label("Username"),
     password: joiPassword
       .string()

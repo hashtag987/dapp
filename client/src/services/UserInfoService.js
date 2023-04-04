@@ -16,10 +16,17 @@ export class UserInfoService extends React.Component {
     return Math.ceil(block.baseFeePerGas);
   };
 
-  addUserInfo = async (name, userName, password, masterPublicKey, account) => {
+  addUserInfo = async (
+    name,
+    userName,
+    password,
+    masterPublicKey,
+    account,
+    profileImage
+  ) => {
     await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
-      .addUserInfo(account, name, userName, masterPublicKey)
+      .addUserInfo(account, name, userName, profileImage, masterPublicKey)
       .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
         if (error) {
           console.log(error);
@@ -28,13 +35,32 @@ export class UserInfoService extends React.Component {
       });
     const next_gas_price = await this.getMaxfeePerGas();
     await this.props.auth.methods
-      .addUserInfo(account, name, userName, masterPublicKey)
+      .addUserInfo(account, name, userName, profileImage, masterPublicKey)
       .send({
         from: account,
         gasPrice: gasEstimate,
         maxFeePerGas: next_gas_price,
         gas: 6721975,
       });
+  };
+
+  changeProfile = async (account, password, profileImage) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    const gasEstimate = await this.props.auth.methods
+      .changeProfile(account, profileImage)
+      .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+        }
+        if (gasAmount === 6721975) console.log("Method ran out of gas");
+      });
+    const next_gas_price = await this.getMaxfeePerGas();
+    await this.props.auth.methods.changeProfile(account, profileImage).send({
+      from: account,
+      gasPrice: gasEstimate,
+      maxFeePerGas: next_gas_price,
+      gas: 6721975,
+    });
   };
 
   getAllusers = async () => {
@@ -69,6 +95,11 @@ export class UserInfoService extends React.Component {
   getUserById = async (userId) => {
     const user = await this.props.auth.methods.getUserById(userId).call();
     return Object.assign({}, user);
+  };
+
+  getProfile = async (userId) => {
+    const user = await this.props.auth.methods.getProfile(userId).call();
+    return user;
   };
 
   createWeb3 = async (e) => {

@@ -6,6 +6,7 @@ contract UserManagementContract {
         string userId;
         string name;
         string username;
+        string profileImage;
         string masterPublicKey;
     }
 
@@ -20,9 +21,16 @@ contract UserManagementContract {
         string memory userid,
         string memory name,
         string memory username,
+        string memory profileImage,
         string memory masterPublickey
     ) public returns (Message memory) {
-        User memory user = User(userid, name, username, masterPublickey);
+        User memory user = User(
+            userid,
+            name,
+            username,
+            profileImage,
+            masterPublickey
+        );
         addressToUser[userid] = user;
         addressLUT.push(userid);
         Message memory message = Message(200, "Success");
@@ -71,6 +79,20 @@ contract UserManagementContract {
             }
         }
         return addressToUser["abc"];
+    }
+
+    function changeProfile(
+        string memory userId,
+        string memory profileImage
+    ) public {
+        User storage user = addressToUser[userId];
+        user.profileImage = profileImage;
+    }
+
+    function getProfile(
+        string memory userId
+    ) public view returns (string memory) {
+        return addressToUser[userId].profileImage;
     }
 
     function getUserById(

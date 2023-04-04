@@ -11,22 +11,31 @@ import {
 import GroupsIcon from "@mui/icons-material/Groups";
 import { Icon } from "@iconify/react";
 import Avatar from "@mui/material/Avatar";
+import { create } from "ipfs-http-client";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { LOGO_COLOR } from "../../constants";
+import { LOGO_COLOR, URL } from "../../constants";
+import Alertbox from "../../utils/AlertBox";
+import { UserInfoService } from "../../services/UserInfoService";
 const Account = () => {
   const navigate = useNavigate();
   const [usersvc, setusersvc] = useState(null);
   const [friendsvc, setfriendsvc] = useState(null);
+  const [uinfosvc, setuinfosvc] = useState(null);
   const [userId, setuserId] = useState("");
   const [username, setusername] = useState("");
   const [balance, setbalance] = useState(0);
   const [friends, setfriends] = useState(0);
   const [Transactions, setTransactions] = useState(0);
+  const [messagealert, setmessagealert] = useState(false);
+  const [message, setmessage] = useState("");
+  const [severity, setseverity] = useState("success");
+  const [imageURL, setimageURL] = useState("");
   useEffect(() => {
     setfriendsvc(new FriendService());
     setusersvc(new UserService());
+    setuinfosvc(new UserInfoService());
     setuserId(window.sessionStorage.getItem("userId"));
     setusername(window.sessionStorage.getItem("username"));
   }, []);
@@ -43,6 +52,69 @@ const Account = () => {
       getBalance();
     }
   }, [usersvc]);
+
+  useEffect(() => {
+    if (uinfosvc != null) {
+      getProfile();
+    }
+  }, [uinfosvc]);
+
+  const changeProfile = async () => {
+    try {
+      await uinfosvc.changeProfile(
+        userId,
+        window.sessionStorage.getItem("password"),
+        imageURL
+      );
+      setmessagealert(true);
+      setmessage("Profile updated Successfully");
+      setseverity("success");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getProfile = async () => {
+    try {
+      const image = await uinfosvc.getProfile(userId);
+      console.log(image);
+      setimageURL(image);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const uploadImage = async (event) => {
+    try {
+      const file = event.target.files[0];
+      const TOKEN = await axios.post(URL.DOMAIN + URL.TOKEN_BUFFER, {
+        id: process.env.REACT_APP_IPFS_PROJECT_ID,
+        key: process.env.REACT_APP_IPFS_PROJECT_SECRECT,
+      });
+      const auth = "Basic " + TOKEN.data.data;
+
+      const client = create({
+        host: "ipfs.infura.io",
+        port: 5001,
+        protocol: "https",
+        headers: {
+          authorization: auth,
+        },
+      });
+      const { cid } = await client.add(file);
+      const url = `https://test-arun.infura-ipfs.io/ipfs/${cid}`;
+      console.log(url);
+      setmessagealert(true);
+      setmessage("Looking good!");
+      setseverity("success");
+      setimageURL(url);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleAlertClose = () => {
+    setmessagealert(false);
+  };
   const getFriendsCount = async () => {
     try {
       const friends = await friendsvc.getFriends(userId);
@@ -72,7 +144,7 @@ const Account = () => {
       console.log(error);
     }
   };
-  const handleChange = () => [console.log("hello")];
+  // const handleChange = () => [console.log("hello")];
   const style = {
     minWidth: 200,
     height: 140,
@@ -82,6 +154,12 @@ const Account = () => {
   };
   return (
     <div>
+      <Alertbox
+        openalert={messagealert}
+        handleAlertClose={handleAlertClose}
+        message={message}
+        severity={severity}
+      ></Alertbox>
       <IconButton onClick={() => navigate("/home/" + username)}>
         <ArrowBackIcon className="back-to-home"></ArrowBackIcon>
       </IconButton>
@@ -94,13 +172,13 @@ const Account = () => {
           </div>
           <div class="main__content">
             <div class="main__avatar">
-              <Avatar sx={{ width: 150, height: 150 }}></Avatar>
+              <Avatar sx={{ width: 150, height: 150 }} src={imageURL}></Avatar>
             </div>
             <div class="main__settings-form">
               <input
                 type="file"
                 className="profile-change"
-                onChange={handleChange}
+                onChange={uploadImage}
               />
               <label class="main__input-label">{username}</label>
             </div>
@@ -201,6 +279,7 @@ const Account = () => {
                 variant="contained"
                 className="btn-action"
                 sx={{ backgroundColor: LOGO_COLOR }}
+                onClick={changeProfile}
               >
                 Save
               </Button>

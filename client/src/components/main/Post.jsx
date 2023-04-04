@@ -43,19 +43,13 @@ export default function Post() {
   const [message, setmessage] = useState("");
   const [severity, setseverity] = useState("success");
   const [imageURL, setimageURL] = useState("");
+  const [profileImage, setprofileImage] = useState("");
 
   useEffect(() => {
     setuinfo(new UserInfoService());
     setpostsvc(new PostService());
     setfriendsvc(new FriendService());
     setusersvc(new UserService());
-    var today = new Date();
-    let dateString = today.toDateString().split(" ");
-    let dateTime = today.toLocaleString();
-    console.log(dateTime);
-    // 4/2/2023, 9:13:20 AM
-    const postDate = "4/2/2023, 9:22:20 AM";
-    console.log(getPostTimestamp(new Date(postDate)));
   }, []);
 
   const getPostTimestamp = (postDate) => {
@@ -104,6 +98,33 @@ export default function Post() {
     sample();
   }, [postsvc]);
 
+  const getProfile = async () => {
+    try {
+      const image = await uinfo.getProfile(
+        window.sessionStorage.getItem("userId")
+      );
+      // console.log(image);
+      setprofileImage(image);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getProfileById = async (userId) => {
+    try {
+      const image = await uinfo.getProfile(userId);
+      console.log(image);
+      return image;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    if (uinfo != null) {
+      getProfile();
+    }
+  }, [uinfo]);
+
   const getPosts = async () => {
     try {
       const userId = window.sessionStorage.getItem("userId");
@@ -119,11 +140,13 @@ export default function Post() {
         });
         tempPost.post = res.data.decPost;
         tempPost.username = userInfo.username;
+        tempPost.profile = await getProfileById(userInfo.userId);
         postsWithUser.push(tempPost);
       }
       postsWithUser = postsWithUser.sort(
         (a, b) => new Date(b.timeStamp) - new Date(a.timeStamp)
       );
+      console.log(postsWithUser);
       setposts(postsWithUser);
     } catch (error) {
       console.log(error);
@@ -197,7 +220,6 @@ export default function Post() {
         .then(() => {
           getPosts();
         });
-
       for (let friend of myFriends) {
         const userInfo = await uinfo.getUserById(friend.userid);
         const res = await axios.post(URL.DOMAIN + URL.ENCRYPT_POST, {
@@ -239,7 +261,11 @@ export default function Post() {
       <Card sx={{ maxWidth: 550, marginBottom: 2 }}>
         <CardHeader
           avatar={
-            <Avatar sx={{ bgcolor: LOGO_COLOR }} aria-label="recipe"></Avatar>
+            <Avatar
+              sx={{ bgcolor: LOGO_COLOR }}
+              aria-label="recipe"
+              src={profileImage}
+            ></Avatar>
           }
           title="You"
         />
@@ -299,7 +325,7 @@ export default function Post() {
           <Card sx={{ maxWidth: 550, marginBottom: 2 }} key={index}>
             <CardHeader
               avatar={
-                <Avatar sx={{ bgcolor: LOGO_COLOR }} aria-label="recipe">
+                <Avatar sx={{ bgcolor: LOGO_COLOR }} aria-label="recipe" src={post.profile}>
                   {post.username.charAt(0).toUpperCase()}
                 </Avatar>
               }

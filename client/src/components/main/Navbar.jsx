@@ -357,7 +357,7 @@ export default function Navbar(props) {
               >
                 {LOGO_TEXT}
               </Typography>
-              <Search>
+              {/* <Search>
                 <SearchIconWrapper>
                   <SearchIcon style={{ fontSize: 20, color: LOGO_COLOR }} />
                 </SearchIconWrapper>
@@ -367,7 +367,7 @@ export default function Navbar(props) {
                   inputProps={{ "aria-label": "search" }}
                 />
                 <SearchFriends searchContent={searchContent} />
-              </Search>
+              </Search> */}
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <Tooltip title="Friends" arrow>
