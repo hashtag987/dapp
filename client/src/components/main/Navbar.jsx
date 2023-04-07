@@ -414,8 +414,8 @@ export default function Navbar(props) {
         );
       }
       await friends.removeFriend(userId, password, user.userId).then(() => {
-        getRequests();
-      });
+          getFriends();
+        });
     } catch (error) {
       console.log(error);
     }

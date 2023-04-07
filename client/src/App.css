@@ -3,7 +3,7 @@
   src: url("./assets/fonts/soc-font.woff");
   font-weight: medium;
 }
-body{
+body {
   /* background-color:#121c35; */
 }
 .center {
@@ -69,7 +69,7 @@ body{
   /* display: none; */
 }
 
-.friends-recommendations-div{
+.friends-recommendations-div {
   height: 300px;
   overflow: auto;
 }
@@ -142,4 +142,31 @@ body{
 }
 .css-tbsolc {
   border: none !important;
+}
+
+.post-textarea {
+  font-family: soc;
+  padding: 5px;
+  border-width: 1px;
+  border-color: #dbdbdb;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.post-textarea:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.post-textarea::-webkit-resizer {
+  display: "none";
+}
+.post-textarea::-moz-resizer {
+  display: "none";
+}
+.post-textarea::-o-resizer {
+  display: "none";
+}
+.post-textarea::-ms-resizer {
+  display: "none";
 }

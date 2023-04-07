@@ -143,6 +143,7 @@ export class FriendService extends React.Component {
       maxFeePerGas: next_gas_price,
       gas: 6721975,
     });
+    return 200;
   };
 
   getFriends = async (userId) => {
@@ -258,7 +259,7 @@ export class FriendService extends React.Component {
     });
     return 200;
   };
-  
+
   getNotifications = async (userId) => {
     const response = await this.props.auth.methods
       .getNotifications(userId)

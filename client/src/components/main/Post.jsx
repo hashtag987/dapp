@@ -7,6 +7,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Avatar from "@mui/material/Avatar";
 // import IconButton from "@mui/material/IconButton";
+import { Icon } from "@iconify/react";
 import Typography from "@mui/material/Typography";
 import UploadIcon from "@mui/icons-material/Upload";
 import IconButton from "@mui/material/IconButton";
@@ -21,6 +22,7 @@ import { LOGO_COLOR, STATUS_MESSAGE, URL } from "../../constants";
 import axios from "axios";
 import { UserService } from "../../services/UserService";
 import Alertbox from "../../utils/AlertBox";
+import { useRef } from "react";
 // const ExpandMore = styled((props) => {
 //   const { expand, ...other } = props;
 //   return <IconButton {...other} />;
@@ -45,6 +47,7 @@ export default function Post() {
   const [imageURL, setimageURL] = useState("");
   const [profileImage, setprofileImage] = useState("");
   const [loading, setloading] = useState(false);
+  const textAreaRef = useRef(null);
   useEffect(() => {
     setuinfo(new UserInfoService());
     setpostsvc(new PostService());
@@ -188,6 +191,7 @@ export default function Post() {
 
   const createPost = async () => {
     try {
+      setnewpost("");
       if (newpost.length === 0 && imageURL.length === 0) {
         setmessagealert(true);
         setmessage(STATUS_MESSAGE.EMPTY_POST_CONTENT);
@@ -238,7 +242,6 @@ export default function Post() {
         );
       }
       setimageURL("");
-      setnewpost("");
     } catch (error) {
       console.log(error);
     }
@@ -273,40 +276,52 @@ export default function Post() {
         <CardContent>
           <Typography variant="body2" color="text.secondary">
             <TextareaAutosize
+              ref={textAreaRef}
+              className="post-textarea"
               aria-label="minimum height"
               minRows={3}
               maxRows={10}
+              value={newpost}
               onChange={handleChange}
               placeholder="What's on your mind"
-              style={{ width: 500, fontFamily: "sans-serif !important" }}
+              style={{
+                width: 500,
+              }}
             />
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
-          <Button
-            onClick={createPost}
-            variant="contained"
-            size="medium"
-            style={{
-              marginTop: "-10px",
-              marginLeft: "8px",
-              textTransform: "none",
-              width: 75,
-              height: 30,
-              fontSize: 12,
-              backgroundColor: LOGO_COLOR,
-            }}
-          >
-            Post <SendIcon sx={{ paddingLeft: 1, fontSize: "15px" }} />
-          </Button>
+          <Tooltip title="Post" arrow>
+            <IconButton
+              onClick={createPost}
+              variant="outlined"
+              component="label"
+              size="medium"
+              style={{
+                marginTop: "-10px",
+                marginLeft: "8px",
+                textTransform: "none",
+                width: 35,
+                height: 35,
+                backgroundColor: "",
+              }}
+            >
+              <Icon
+                icon="mingcute:send-plane-fill"
+                width="35px"
+                height="35px"
+                color={LOGO_COLOR}
+              />
+            </IconButton>
+          </Tooltip>
           {loading ? (
             <CircularProgress
               style={{
                 height: 20,
                 width: 20,
                 marginTop: "-10px",
-                marginLeft: "8px",
-                color:LOGO_COLOR,
+                marginLeft: "0px",
+                color: LOGO_COLOR,
               }}
             />
           ) : (
@@ -317,14 +332,19 @@ export default function Post() {
                 size="medium"
                 style={{
                   marginTop: "-10px",
-                  marginLeft: "8px",
+                  marginLeft: "0px",
                   textTransform: "none",
-                  width: 30,
-                  height: 30,
+                  width: 35,
+                  height: 35,
                   backgroundColor: "",
                 }}
               >
-                <UploadIcon sx={{ color: LOGO_COLOR }} />
+                <Icon
+                  icon="solar:gallery-send-bold"
+                  width="35px"
+                  height="35px"
+                  color={LOGO_COLOR}
+                />
                 <input type="file" onChange={uploadImage} hidden />
               </IconButton>
             </Tooltip>
