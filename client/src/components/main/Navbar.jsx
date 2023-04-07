@@ -9,7 +9,9 @@ import InputBase from "@mui/material/InputBase";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import { Icon } from "@iconify/react";
 import SearchIcon from "@mui/icons-material/Search";
+import LogoutIcon from "@mui/icons-material/Logout";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
@@ -28,7 +30,8 @@ import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import { FriendService } from "../../services/FriendService";
 import { UserInfoService } from "../../services/UserInfoService";
 import FriendRecommendations from "./friends/FriendRecommendations";
-import { Tooltip } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
+import { v4 as uuid } from "uuid";
 import SearchFriends from "./friends/SearchFriends";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -135,14 +138,31 @@ export default function Navbar(props) {
   const [searchContent, setsearchContent] = useState("");
   const [myFriends, setmyFriends] = useState([]);
   const [users, setusers] = useState([]);
+  const [read, setread] = useState(false);
+  const [notifications, setnotifications] = useState([]);
+  const [profileImage, setprofileImage] = useState("");
+  const [unreadnotifications, setunreadnotifications] = useState(0);
   useEffect(() => {
     setfriends(new FriendService());
     setuinfo(new UserInfoService());
   }, []);
 
+  const getUnreadNotificationsCount = async () => {
+    try {
+      const count = await friends.getUnreadNotificationsCount(
+        window.sessionStorage.getItem("userId")
+      );
+      setunreadnotifications(count);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (friends != null) {
       getRequests();
+      getUnreadNotificationsCount();
+      getAllNotifications();
     }
   }, [friends]);
 
@@ -152,16 +172,87 @@ export default function Navbar(props) {
     }
   }, [friends]);
 
+  useEffect(() => {
+    if (uinfo != null) {
+      getProfile();
+    }
+  }, [uinfo]);
+
   const handleChange = ({ currentTarget: input }) => {
     setsearchContent(input.value);
   };
 
+  const getNotifcationTimestamp = (notDate) => {
+    const currentDate = new Date();
+    const utcCurrentDate = Date.UTC(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      currentDate.getDate()
+    );
+    const utcnotDate = Date.UTC(
+      notDate.getFullYear(),
+      notDate.getMonth(),
+      notDate.getDate()
+    );
+
+    const daysDifference = Math.floor(
+      (utcCurrentDate - utcnotDate) / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysDifference === 0) {
+      return "Today, " + notDate.toLocaleTimeString();
+    } else if (daysDifference === 1) {
+      return "Yesterday, " + notDate.toLocaleTimeString();
+    } else {
+      const notDateStr = notDate.toDateString().split(" ");
+      return (
+        notDateStr[1] +
+        " " +
+        notDateStr[2] +
+        "," +
+        notDateStr[3] +
+        ", " +
+        notDate.toLocaleTimeString()
+      );
+    }
+  };
+
+  const getProfile = async () => {
+    try {
+      const image = await uinfo.getProfile(
+        window.sessionStorage.getItem("userId")
+      );
+      setprofileImage(image);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getProfileById = async (userId) => {
+    try {
+      const image = await uinfo.getProfile(userId);
+      return image;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleOpen = async (event) => {
     try {
-      if (event.currentTarget.id == "notifications") {
+      if (event.currentTarget.id === "requests") {
         const myRequests = await getRequests();
-        setusage(REUSABLE.NOTIFICATION);
+        setusage(REUSABLE.REQUEST);
         setcontent(myRequests);
+      } else if (event.currentTarget.id === "notifications") {
+        const userId = window.sessionStorage.getItem("userId");
+        const password = window.sessionStorage.getItem("password");
+        const myNotifications = await getAllNotifications();
+        await friends.markAsReadNotification(userId, password).then(() => {
+          getUnreadNotificationsCount();
+        });
+        setusage(REUSABLE.NOTIFICATION);
+        setcontent(myNotifications);
+        setread(true);
       } else {
         const myFriends = await getFriends();
         setusage(REUSABLE.FRIENDS);
@@ -172,9 +263,44 @@ export default function Navbar(props) {
       console.log(error);
     }
   };
-  const handleClose = () => setOpen(false);
+  const handleClose = async () => {
+    setOpen(false);
+  };
   const isMenuOpen = Boolean(anchorEl);
 
+  const deleteAllNotifications = async () => {
+    try {
+      const userId = window.sessionStorage.getItem("userId");
+      const password = window.sessionStorage.getItem("password");
+      await friends.deleteAllNotifications(userId, password);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getAllNotifications = async () => {
+    try {
+      let notResponse = await friends.getNotifications(
+        window.sessionStorage.getItem("userId")
+      );
+      let notificationsJSON = [];
+      for (let notification of notResponse) {
+        const userInfo = await uinfo.getUserById(notification.friendId);
+        notification.username = userInfo.username;
+        notification.profileImage = await getProfileById(notification.friendId);
+        // notification.timestamp = getNotifcationTimestamp(
+        //   new Date(notification.timestamp)
+        // );
+        notificationsJSON.push(notification);
+      }
+      notificationsJSON = notificationsJSON.sort(
+        (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+      );
+      setnotifications(notificationsJSON);
+      return notificationsJSON;
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -222,6 +348,7 @@ export default function Navbar(props) {
         const friendJSON = Object.assign({}, friend);
         if (friendJSON.userid.length > 0) {
           const userInfo = await uinfo.getUserById(friendJSON.userid);
+          userInfo.profile = await getProfileById(friendJSON.userid);
           friendList.push(userInfo);
         }
       }
@@ -234,19 +361,33 @@ export default function Navbar(props) {
 
   const approveRequest = async (event, user) => {
     try {
-      const approval = await friends.approveRequest(
-        window.sessionStorage.getItem("userId"),
-        window.sessionStorage.getItem("password"),
-        user.userId
-      );
-      if (approval === 200) {
-        const myRequests = await getRequests();
-        setrequests(myRequests);
-      }
+      const approval = await friends
+        .approveRequest(
+          window.sessionStorage.getItem("userId"),
+          window.sessionStorage.getItem("password"),
+          user.userId
+        )
+        .then(() => {
+          getRequests();
+        });
       const userId = window.sessionStorage.getItem("userId");
       const password = window.sessionStorage.getItem("password");
+      const userName = window.sessionStorage.getItem("username");
       await friends.deleteFromRequested(userId, password, user.userId);
       await friends.addFriend(userId, password, user.userId, true);
+      const timeStamp = new Date().toLocaleString();
+      const notId = uuid().toString();
+      const message = UI.ACCEPTED_FRIEND_REQUEST;
+      await friends.addToNotification(
+        userId,
+        password,
+        user.userId,
+        notId,
+        "friendRequest",
+        timeStamp,
+        message,
+        false
+      );
     } catch (error) {
       console.log(error);
     }
@@ -258,10 +399,50 @@ export default function Navbar(props) {
       const password = window.sessionStorage.getItem("password");
       if (event.currentTarget.textContent === "Reject") {
         await friends.deleteFromRequested(userId, password, user.userId);
+        const timeStamp = new Date().toLocaleString();
+        const notId = uuid().toString();
+        const message = UI.REJECTED_FRIEND_REQUEST;
+        await friends.addToNotification(
+          userId,
+          password,
+          user.userId,
+          notId,
+          "friendRequest",
+          timeStamp,
+          message,
+          false
+        );
       }
       await friends.removeFriend(userId, password, user.userId).then(() => {
         getRequests();
       });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const undoRequest = async (user) => {
+    try {
+      const userId = window.sessionStorage.getItem("userId");
+      const password = window.sessionStorage.getItem("password");
+      await friends.undoRequest(userId, password, user.userId);
+      await friends.removeFriend(userId, password, user.userId).then(() => {
+        getRequests();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const sendRequest = async (user) => {
+    try {
+      const userId = window.sessionStorage.getItem("userId");
+      const password = window.sessionStorage.getItem("password");
+      await friends.addFriend(userId, password, user.userId, false);
+      await friends.addToRequested(userId, password, user.userId);
+      setmessagealert(true);
+      setmessage("Request sent Successfully");
+      setseverity("success");
     } catch (error) {
       console.log(error);
     }
@@ -332,9 +513,13 @@ export default function Navbar(props) {
         }}
         style={{ fontSize: 13 }}
       >
+        <AccountCircle
+          sx={{ fontSize: 20, paddingRight: 1, color: LOGO_COLOR }}
+        />
         My Account
       </MenuItem>
       <MenuItem onClick={logout} style={{ fontSize: 13 }}>
+        <LogoutIcon sx={{ fontSize: 20, paddingRight: 1, color: LOGO_COLOR }} />
         Log out
       </MenuItem>
     </Menu>
@@ -357,7 +542,7 @@ export default function Navbar(props) {
               >
                 {LOGO_TEXT}
               </Typography>
-              {/* <Search>
+              <Search>
                 <SearchIconWrapper>
                   <SearchIcon style={{ fontSize: 20, color: LOGO_COLOR }} />
                 </SearchIconWrapper>
@@ -366,8 +551,14 @@ export default function Navbar(props) {
                   placeholder={UI.SEARCH_PLACEHOLDER}
                   inputProps={{ "aria-label": "search" }}
                 />
-                <SearchFriends searchContent={searchContent} />
-              </Search> */}
+                <SearchFriends
+                  searchContent={searchContent}
+                  sendRequest={sendRequest}
+                  getFriends={getFriends}
+                  getRequests={getRequests}
+                  removeRequest={undoRequest}
+                />
+              </Search>
               <Box sx={{ flexGrow: 1 }} />
               <Box sx={{ display: { xs: "none", md: "flex" } }}>
                 <Tooltip title="Friends" arrow>
@@ -383,6 +574,24 @@ export default function Navbar(props) {
                     />
                   </IconButton>
                 </Tooltip>
+                <Tooltip title="Requests" arrow>
+                  <IconButton
+                    onClick={handleOpen}
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    color="inherit"
+                    id="requests"
+                  >
+                    <Badge badgeContent={requests.length} color="error">
+                      <Icon
+                        icon="fluent-mdl2:message-friend-request"
+                        width="20"
+                        height="20"
+                        color={LOGO_COLOR}
+                      />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
                 <Tooltip title="Notifications" arrow>
                   <IconButton
                     onClick={handleOpen}
@@ -391,7 +600,12 @@ export default function Navbar(props) {
                     color="inherit"
                     id="notifications"
                   >
-                    <Badge badgeContent={requests.length} color="error">
+                    <Badge
+                      badgeContent={
+                        unreadnotifications > 0 ? unreadnotifications : 0
+                      }
+                      color="error"
+                    >
                       <NotificationsIcon
                         style={{ fontSize: 20, color: LOGO_COLOR }}
                       />
@@ -405,6 +619,8 @@ export default function Navbar(props) {
                   contents={content}
                   approveRequest={approveRequest}
                   removeFriend={removeFriend}
+                  deleteAllNotifications={deleteAllNotifications}
+                  getNotifcationTimestamp={getNotifcationTimestamp}
                 />
                 <IconButton
                   size="large"
@@ -415,7 +631,11 @@ export default function Navbar(props) {
                   onClick={handleProfileMenuOpen}
                   color="inherit"
                 >
-                  <AccountCircle style={{ fontSize: 20, color: LOGO_COLOR }} />
+                  <Avatar
+                    sx={{ height: 19, width: 19, backgroundColor: LOGO_COLOR }}
+                    src={profileImage}
+                  ></Avatar>
+                  {/* <AccountCircle style={{ fontSize: 20, color: LOGO_COLOR }}  /> */}
                 </IconButton>
               </Box>
               <Box sx={{ display: { xs: "flex", md: "none" } }}>

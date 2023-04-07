@@ -16,10 +16,10 @@ export const URL = {
 
 //deployed contract addresses
 export const CONTRACT = {
-  USER_CREATION_CONTRACT: "0xC4856153916f08cc57645C1E382FB245375587a7",
-  USER_MANAGEMENT_CONTRACT: "0x568076c1C4ba43B1c8f4b0597567188Ebcd5541e",
-  FRIEND_REQUEST: "0x36952713afb53890D23B93e2572f1E3F367c0F5E",
-  POST_CONTRACT: "0xbdF5dF3b78d254E63C6606BC5FF566d06cE44B63",
+  USER_CREATION_CONTRACT: "0x5EA83Cb6CB55edAE27fb360567BF0A8e6096934F",
+  USER_MANAGEMENT_CONTRACT: "0x11906b6cd7b7f8DAd384dA95284D7Ad8349481B4",
+  FRIEND_REQUEST: "0x9bE03CaC4D8a9D4fba02B17D2152F711e582A9c2",
+  POST_CONTRACT: "0x3Cd5a2fBa61917Edcf13AaBD99E7608BAb249091",
 };
 
 export const STATUS_MESSAGE = {
@@ -32,6 +32,7 @@ export const STATUS_MESSAGE = {
   INVALID_USER: "Invalid Username or Password",
   EMPTY_NOTIFICATIONS: "Currently there no notifications for you",
   EMPTY_FRIENDS: "Looks like you're alone. Add some friends",
+  EMPTY_REQUESTS: "No friend Requests",
   EMPTY_POSTS: "No posts Found❕",
   EMPTY_POST_CONTENT: "Post content cannot be empty",
   EMPTY_USERS: "No users found",
@@ -42,8 +43,13 @@ export const UI = {
   LOGIN_HOME_TEXT: "Welcome Back",
   RECOMMENDATIONS_HEADER: "Recommended for you",
   SEARCH_PLACEHOLDER: "Find Friends",
+  SEARCH_FRIENDS_PLACEHOLDER: "Search Friends",
+  ACCEPTED_FRIEND_REQUEST: " has accepted your friend request",
+  REJECTED_FRIEND_REQUEST: " has rejected your friend request",
+  REMOVED_FROM_FRIENDS: " has removed you from their friend list",
 };
 export const REUSABLE = {
   NOTIFICATION: 1000,
   FRIENDS: 1001,
+  REQUEST: 1002,
 };

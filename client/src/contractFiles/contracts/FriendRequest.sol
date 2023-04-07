@@ -12,8 +12,18 @@ contract FriendRequest {
         uint8 status;
     }
 
+    struct Notification {
+        string notId;
+        string friendId;
+        string timestamp;
+        string notType;
+        string message;
+        bool isRead;
+    }
+
     mapping(string => Friend[]) private userToFriend;
     mapping(string => string[]) private requesterToRequested;
+    mapping(string => Notification[]) private addressToNotification;
     string[] private addressLUT;
 
     function addFriend(
@@ -117,5 +127,68 @@ contract FriendRequest {
             }
         }
         return Message(500, "Internal server error!");
+    }
+
+    function addToNotification(
+        string memory notId,
+        string memory userId,
+        string memory friendId,
+        string memory timestamp,
+        string memory notType,
+        string memory message,
+        bool isRead
+    ) public {
+        Notification memory not = Notification(
+            notId,
+            friendId,
+            timestamp,
+            notType,
+            message,
+            isRead
+        );
+        addressToNotification[userId].push(not);
+    }
+
+    function getNotifications(
+        string memory userId
+    ) public view returns (Notification[] memory) {
+        return addressToNotification[userId];
+    }
+
+    function getUnreadNotificationsCount(
+        string memory userId
+    ) public view returns (uint8) {
+        uint8 count = 0;
+        for (uint i = 0; i < addressToNotification[userId].length; i++) {
+            if (!addressToNotification[userId][i].isRead) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    function markAsReadNotification(string memory userId) public {
+        for (uint i = 0; i < addressToNotification[userId].length; i++) {
+            Notification storage not = addressToNotification[userId][i];
+            not.isRead = true;
+        }
+    }
+
+    function deleteAllNotifications(string memory userId) public {
+        delete addressToNotification[userId];
+    }
+
+    function deleteNotification(
+        string memory userId,
+        string memory notId
+    ) public {
+        for (uint i = 0; i < addressToNotification[userId].length; i++) {
+            if (
+                keccak256(bytes(addressToNotification[userId][i].notId)) ==
+                keccak256(bytes(notId))
+            ) {
+                delete addressToNotification[userId][i];
+            }
+        }
     }
 }

@@ -263,4 +263,163 @@ export const FriendRequestABI = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "notId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "friendId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "timestamp",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "notType",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "message",
+        type: "string",
+      },
+      {
+        internalType: "bool",
+        name: "isRead",
+        type: "bool",
+      },
+    ],
+    name: "addToNotification",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+    ],
+    name: "getNotifications",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "string",
+            name: "notId",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "friendId",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "timestamp",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "notType",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "message",
+            type: "string",
+          },
+          {
+            internalType: "bool",
+            name: "isRead",
+            type: "bool",
+          },
+        ],
+        internalType: "struct FriendRequest.Notification[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+    ],
+    name: "getUnreadNotificationsCount",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+    ],
+    name: "markAsReadNotification",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+    ],
+    name: "deleteAllNotifications",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "userId",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "notId",
+        type: "string",
+      },
+    ],
+    name: "deleteNotification",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];

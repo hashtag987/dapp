@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import UploadIcon from "@mui/icons-material/Upload";
 import IconButton from "@mui/material/IconButton";
 import SendIcon from "@mui/icons-material/Send";
-import { Button, CardMedia, Tooltip } from "@mui/material";
+import { Button, CardMedia, CircularProgress, Tooltip } from "@mui/material";
 import { create } from "ipfs-http-client";
 import { useState, useEffect } from "react";
 import { PostService } from "../../services/PostService";
@@ -44,7 +44,7 @@ export default function Post() {
   const [severity, setseverity] = useState("success");
   const [imageURL, setimageURL] = useState("");
   const [profileImage, setprofileImage] = useState("");
-
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     setuinfo(new UserInfoService());
     setpostsvc(new PostService());
@@ -103,7 +103,6 @@ export default function Post() {
       const image = await uinfo.getProfile(
         window.sessionStorage.getItem("userId")
       );
-      // console.log(image);
       setprofileImage(image);
     } catch (error) {
       console.log(error);
@@ -113,7 +112,6 @@ export default function Post() {
   const getProfileById = async (userId) => {
     try {
       const image = await uinfo.getProfile(userId);
-      console.log(image);
       return image;
     } catch (error) {
       console.log(error);
@@ -135,8 +133,8 @@ export default function Post() {
         let tempPost = post;
         let msk = window.sessionStorage.getItem("token");
         const res = await axios.post(URL.DOMAIN + URL.DECRYPT_POST, {
-          post: post.post.toString("base64"),
-          msk: msk.toString("base64"),
+          post: post.post,
+          msk: msk,
         });
         tempPost.post = res.data.decPost;
         tempPost.username = userInfo.username;
@@ -146,7 +144,6 @@ export default function Post() {
       postsWithUser = postsWithUser.sort(
         (a, b) => new Date(b.timeStamp) - new Date(a.timeStamp)
       );
-      console.log(postsWithUser);
       setposts(postsWithUser);
     } catch (error) {
       console.log(error);
@@ -159,6 +156,7 @@ export default function Post() {
 
   const uploadImage = async (event) => {
     try {
+      setloading(true);
       const file = event.target.files[0];
       const TOKEN = await axios.post(URL.DOMAIN + URL.TOKEN_BUFFER, {
         id: process.env.REACT_APP_IPFS_PROJECT_ID,
@@ -180,6 +178,9 @@ export default function Post() {
       setmessage("Image Uploaded");
       setseverity("success");
       setimageURL(url);
+      if (url !== undefined) {
+        setloading(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -298,24 +299,36 @@ export default function Post() {
           >
             Post <SendIcon sx={{ paddingLeft: 1, fontSize: "15px" }} />
           </Button>
-          <Tooltip title="Upload Image" arrow>
-            <IconButton
-              variant="outlined"
-              component="label"
-              size="medium"
+          {loading ? (
+            <CircularProgress
               style={{
+                height: 20,
+                width: 20,
                 marginTop: "-10px",
                 marginLeft: "8px",
-                textTransform: "none",
-                width: 30,
-                height: 30,
-                backgroundColor: "",
+                color:LOGO_COLOR,
               }}
-            >
-              <UploadIcon sx={{ color: LOGO_COLOR }} />
-              <input type="file" onChange={uploadImage} hidden />
-            </IconButton>
-          </Tooltip>
+            />
+          ) : (
+            <Tooltip title="Upload Image" arrow>
+              <IconButton
+                variant="outlined"
+                component="label"
+                size="medium"
+                style={{
+                  marginTop: "-10px",
+                  marginLeft: "8px",
+                  textTransform: "none",
+                  width: 30,
+                  height: 30,
+                  backgroundColor: "",
+                }}
+              >
+                <UploadIcon sx={{ color: LOGO_COLOR }} />
+                <input type="file" onChange={uploadImage} hidden />
+              </IconButton>
+            </Tooltip>
+          )}
         </CardActions>
       </Card>
       {posts.length === 0 ? (
@@ -325,7 +338,11 @@ export default function Post() {
           <Card sx={{ maxWidth: 550, marginBottom: 2 }} key={index}>
             <CardHeader
               avatar={
-                <Avatar sx={{ bgcolor: LOGO_COLOR }} aria-label="recipe" src={post.profile}>
+                <Avatar
+                  sx={{ bgcolor: LOGO_COLOR }}
+                  aria-label="recipe"
+                  src={post.profile}
+                >
                   {post.username.charAt(0).toUpperCase()}
                 </Avatar>
               }

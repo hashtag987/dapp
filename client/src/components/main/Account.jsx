@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { UserService } from "../../services/UserService";
 import { FriendService } from "../../services/FriendService";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   Typography,
   Card,
@@ -32,6 +33,7 @@ const Account = () => {
   const [message, setmessage] = useState("");
   const [severity, setseverity] = useState("success");
   const [imageURL, setimageURL] = useState("");
+  const [loading, setloading] = useState(false);
   useEffect(() => {
     setfriendsvc(new FriendService());
     setusersvc(new UserService());
@@ -77,7 +79,6 @@ const Account = () => {
   const getProfile = async () => {
     try {
       const image = await uinfosvc.getProfile(userId);
-      console.log(image);
       setimageURL(image);
     } catch (error) {
       console.log(error);
@@ -86,6 +87,7 @@ const Account = () => {
 
   const uploadImage = async (event) => {
     try {
+      setloading(true);
       const file = event.target.files[0];
       const TOKEN = await axios.post(URL.DOMAIN + URL.TOKEN_BUFFER, {
         id: process.env.REACT_APP_IPFS_PROJECT_ID,
@@ -103,11 +105,14 @@ const Account = () => {
       });
       const { cid } = await client.add(file);
       const url = `https://test-arun.infura-ipfs.io/ipfs/${cid}`;
-      console.log(url);
-      setmessagealert(true);
-      setmessage("Looking good!");
-      setseverity("success");
+      
       setimageURL(url);
+      if (url !== undefined) {
+        setloading(false);
+      }
+      // setmessagealert(true);
+      // setmessage("Looking good!");
+      // setseverity("success");
     } catch (error) {
       console.log(error);
     }
@@ -119,7 +124,6 @@ const Account = () => {
     try {
       const friends = await friendsvc.getFriends(userId);
       setfriends(friends.length);
-      console.log(friends.length);
     } catch (error) {
       console.log(error);
     }
@@ -128,7 +132,6 @@ const Account = () => {
     try {
       const txcount = await usersvc.getTransactionsCount(userId);
       setTransactions(txcount);
-      console.log(txcount);
     } catch (error) {
       console.log(error);
     }
@@ -137,14 +140,11 @@ const Account = () => {
   const getBalance = async () => {
     try {
       const balance = await usersvc.getBalance(userId);
-      console.log(balance);
       setbalance(Math.round(balance * 100) / 100);
-      console.log(Math.round(balance * 100) / 100);
     } catch (error) {
       console.log(error);
     }
   };
-  // const handleChange = () => [console.log("hello")];
   const style = {
     minWidth: 200,
     height: 140,
@@ -175,11 +175,22 @@ const Account = () => {
               <Avatar sx={{ width: 150, height: 150 }} src={imageURL}></Avatar>
             </div>
             <div class="main__settings-form">
-              <input
-                type="file"
+              <Button
+                variant="text"
+                component="label"
                 className="profile-change"
-                onChange={uploadImage}
-              />
+              >
+                Change profile
+                <input type="file" onChange={uploadImage} hidden />
+                {loading ? (
+                  <CircularProgress
+                    style={{ height: 20, width: 20, padding: 5 }}
+                  />
+                ) : (
+                  <></>
+                )}
+              </Button>
+
               <label class="main__input-label">{username}</label>
             </div>
             <div className="cards">

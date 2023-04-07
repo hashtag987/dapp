@@ -3,6 +3,9 @@
   src: url("./assets/fonts/soc-font.woff");
   font-weight: medium;
 }
+body{
+  /* background-color:#121c35; */
+}
 .center {
   display: flex;
   place-content: center;
@@ -21,34 +24,64 @@
   flex-direction: column;
   color: #888;
 }
-.box-header{
+.box-header {
   color: #4a79f1 !important;
   font-family: sans-serif;
   font-size: 14px;
   position: relative;
-  left:10px;
-  top:5px;
+  left: 10px;
+  top: 5px;
 }
 
-.recommedantions-header{
+.flex-header {
+  display: grid;
+  grid-template-columns: 260px 100px;
+}
+
+.modal-header-delete {
+  font-size: 20px !important;
+  color: #4a79f1 !important;
+  /* background-color: #f25637; */
+  padding: 4px;
+  cursor: pointer !important;
+}
+
+.modal-header-delete:hover {
+  color: #a6bfff !important;
+}
+
+.recommedantions-header {
   color: #4a79f1 !important;
   font-family: sans-serif;
   font-size: 14px;
-  font-weight:500;
+  font-weight: 500;
   position: absolute;
-  left:100px;
-  top:90px;
+  left: 100px;
+  top: 90px;
 }
-.list-item-text{
+.list-item-text {
   font-size: 1px !important;
 }
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 5px;
   /* display: none; */
 }
 
+.friends-recommendations-div{
+  height: 300px;
+  overflow: auto;
+}
+
+.friends-recommendations-div::-webkit-scrollbar {
+  width: 5px;
+  display: none; /* hide the scrollbar when it is not being used */
+}
+
+.friends-recommendations-div:hover::-webkit-scrollbar {
+  display: block; /* show the scrollbar when it is being used */
+}
 /* Track */
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
@@ -56,12 +89,13 @@
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: #4a79f1;
+  border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #9cb8ff;
 }
 
 .logo {
@@ -82,13 +116,13 @@
   font-size: 50px;
 }
 
-.feed-header-logo{
+.feed-header-logo {
   color: #4a79f1 !important;
   font-family: soc !important;
   font-weight: bold !important;
 }
 
-.not-button{
+.not-button {
   height: 25px !important;
   text-transform: none !important;
   width: 60px !important;
@@ -97,7 +131,7 @@
   border-color: #f25637 !important;
   color: #f25637 !important;
 }
-.accept-button{
+.accept-button {
   height: 25px !important;
   text-transform: none !important;
   font-size: 12px !important;

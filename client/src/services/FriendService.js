@@ -100,6 +100,25 @@ export class FriendService extends React.Component {
     });
   };
 
+  undoRequest = async (account, password, friendId) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    const gasEstimate = await this.props.auth.methods
+      .deleteFromRequested(account, friendId)
+      .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+        }
+        if (gasAmount === 6721975) console.log("Method ran out of gas");
+      });
+    const next_gas_price = await this.getMaxfeePerGas();
+    await this.props.auth.methods.deleteFromRequested(account, friendId).send({
+      from: account,
+      gasPrice: gasEstimate,
+      maxFeePerGas: next_gas_price,
+      gas: 6721975,
+    });
+  };
+
   removeFriend = async (account, password, friendId) => {
     await this.props.web3.eth.personal.unlockAccount(account, password, 60);
     const gasEstimate = await this.props.auth.methods
@@ -165,6 +184,131 @@ export class FriendService extends React.Component {
       });
     const next_gas_price = await this.getMaxfeePerGas();
     await this.props.auth.methods.approveRequest(account, friendId).send({
+      from: account,
+      gasPrice: gasEstimate,
+      maxFeePerGas: next_gas_price,
+      gas: 6721975,
+    });
+    return 200;
+  };
+
+  addToNotification = async (
+    account,
+    password,
+    friendId,
+    notId,
+    notType,
+    timeStamp,
+    message,
+    isRead
+  ) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    const gasEstimate = await this.props.auth.methods
+      .addToNotification(
+        notId,
+        friendId,
+        account,
+        timeStamp,
+        notType,
+        message,
+        isRead
+      )
+      .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+        }
+        if (gasAmount === 6721975) console.log("Method ran out of gas");
+      });
+    const next_gas_price = await this.getMaxfeePerGas();
+    await this.props.auth.methods
+      .addToNotification(
+        notId,
+        friendId,
+        account,
+        timeStamp,
+        notType,
+        message,
+        isRead
+      )
+      .send({
+        from: account,
+        gasPrice: gasEstimate,
+        maxFeePerGas: next_gas_price,
+        gas: 6721975,
+      });
+    return 200;
+  };
+
+  markAsReadNotification = async (account, password) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    const gasEstimate = await this.props.auth.methods
+      .markAsReadNotification(account)
+      .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+        }
+        if (gasAmount === 6721975) console.log("Method ran out of gas");
+      });
+    const next_gas_price = await this.getMaxfeePerGas();
+    await this.props.auth.methods.markAsReadNotification(account).send({
+      from: account,
+      gasPrice: gasEstimate,
+      maxFeePerGas: next_gas_price,
+      gas: 6721975,
+    });
+    return 200;
+  };
+  
+  getNotifications = async (userId) => {
+    const response = await this.props.auth.methods
+      .getNotifications(userId)
+      .call();
+    let notifications = [];
+    for (let notification of response) {
+      notifications.push(Object.assign({}, notification));
+    }
+    return notifications;
+  };
+
+  getUnreadNotificationsCount = async (userId) => {
+    const count = await this.props.auth.methods
+      .getUnreadNotificationsCount(userId)
+      .call();
+    return count;
+  };
+
+  deleteAllNotifications = async (account, password) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    const gasEstimate = await this.props.auth.methods
+      .deleteAllNotifications(account)
+      .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+        }
+        if (gasAmount === 6721975) console.log("Method ran out of gas");
+      });
+    const next_gas_price = await this.getMaxfeePerGas();
+    await this.props.auth.methods.deleteAllNotifications(account).send({
+      from: account,
+      gasPrice: gasEstimate,
+      maxFeePerGas: next_gas_price,
+      gas: 6721975,
+    });
+    return 200;
+  };
+
+  deleteNotification = async (account, password, notId) => {
+    await this.props.web3.eth.personal.unlockAccount(account, password, 60);
+    const gasEstimate = await this.props.auth.methods
+      .deleteNotification(account, notId)
+      .estimateGas({ gas: 6721975 }, function (error, gasAmount) {
+        if (error) {
+          console.log(error);
+        }
+        if (gasAmount === 6721975) console.log("Method ran out of gas");
+      });
+    const next_gas_price = await this.getMaxfeePerGas();
+    await this.props.auth.methods.deleteNotification(account, notId).send({
       from: account,
       gasPrice: gasEstimate,
       maxFeePerGas: next_gas_price,

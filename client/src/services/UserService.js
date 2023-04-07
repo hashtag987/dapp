@@ -144,5 +144,9 @@ export class UserService extends React.Component {
       CONTRACT.USER_CREATION_CONTRACT
     );
     this.props.accounts = await this.props.web3.eth.getAccounts();
+    // console.log(
+    //   "🚀 ~ file: UserService.js:147 ~ UserService ~ createWeb3= ~ this.props.accounts:",
+    //   this.props.accounts
+    // );
   };
 }

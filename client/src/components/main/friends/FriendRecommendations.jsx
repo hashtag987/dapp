@@ -10,11 +10,23 @@ import HowToRegIcon from "@mui/icons-material/HowToReg";
 import { UserInfoService } from "../../../services/UserInfoService";
 import { FriendService } from "../../../services/FriendService";
 import { LOGO_COLOR, UI } from "../../../constants";
-const FriendRecommendations = ({ getRequests, getFriends }) => {
+import Alertbox from "../../../utils/AlertBox";
+const FriendRecommendations = ({
+  getRequests,
+  getFriends,
+  approve,
+  remove,
+}) => {
   const [requested, setrequested] = useState({});
   const [userInfo, setuserInfo] = useState(null);
   const [users, setusers] = useState([]);
   const [friends, setfriends] = useState(null);
+  const [messagealert, setmessagealert] = useState(false);
+  const [message, setmessage] = useState("");
+  const [severity, setseverity] = useState("success");
+  const handleAlertClose = () => {
+    setmessagealert(false);
+  };
   const getRecommendations = async () => {
     try {
       const friendsOrRequests = [];
@@ -66,32 +78,47 @@ const FriendRecommendations = ({ getRequests, getFriends }) => {
       const userId = window.sessionStorage.getItem("userId");
       const password = window.sessionStorage.getItem("password");
       await friends.addFriend(userId, password, user.userId, false);
-      await friends.addToRequested(userId, password, user.userId);
+      await friends.addToRequested(userId, password, user.userId).then(() => {
+        getRecommendations();
+      });
+      setmessagealert(true);
+      setmessage("Request sent Successfully");
+      setseverity("success");
     } catch (error) {
       console.log(error);
     }
   };
   return (
-    <div className="cards">
+    <div className="friends-recommenddations-div">
+      <Alertbox
+        openalert={messagealert}
+        handleAlertClose={handleAlertClose}
+        message={message}
+        severity={severity}
+      ></Alertbox>
       <div className="recommedantions-header">
         {UI.RECOMMENDATIONS_HEADER}
-        <Divider sx={{ width: 250, pt: 1,borderBottomWidth: 2 }} />
+        <Divider sx={{ width: 250, pt: 1, borderBottomWidth: 2 }} />
       </div>
       <List
+        className="friends-recommendations-div"
         sx={{
           marginTop: 7,
           marginLeft: 10,
-          height: 300,
+          // height: 300,
           width: 280,
           bgcolor: "background.paper",
           padding: "10px",
-          overflow: "auto",
+          // overflow: "auto",
           p: -1,
         }}
       >
         {users.length === 0 ? (
           <div className="message-center">
-            {'\u00A0'}{'\u00A0'}{'\u00A0'}There are currently no <br/>recommedantions for you
+            {"\u00A0"}
+            {"\u00A0"}
+            {"\u00A0"}There are currently no <br />
+            recommedantions for you
           </div>
         ) : (
           users
@@ -105,6 +132,7 @@ const FriendRecommendations = ({ getRequests, getFriends }) => {
                 <ListItem>
                   <ListItemAvatar>
                     <Avatar
+                      src={user.profileImage}
                       sx={{
                         fontSize: 19,
                         height: 35,
